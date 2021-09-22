@@ -1,0 +1,5 @@
+
+set sceneAccelerationStructure
+{
+	TopLevelAccelerationStructure accelerationStructure;
+}
