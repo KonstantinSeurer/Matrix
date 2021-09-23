@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS :=
+LIBS := -lglfw -lvulkan -ldl -lpthread -lshaderc_combined -lX11
 
