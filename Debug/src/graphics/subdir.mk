@@ -10,7 +10,8 @@ CPP_SRCS += \
 ../src/graphics/ImageLoader.cpp \
 ../src/graphics/Noise.cpp \
 ../src/graphics/Pipeline.cpp \
-../src/graphics/RenderWindow.cpp 
+../src/graphics/RenderWindow.cpp \
+../src/graphics/VolumeLoader.cpp 
 
 OBJS += \
 ./src/graphics/Buffer.o \
@@ -19,7 +20,8 @@ OBJS += \
 ./src/graphics/ImageLoader.o \
 ./src/graphics/Noise.o \
 ./src/graphics/Pipeline.o \
-./src/graphics/RenderWindow.o 
+./src/graphics/RenderWindow.o \
+./src/graphics/VolumeLoader.o 
 
 CPP_DEPS += \
 ./src/graphics/Buffer.d \
@@ -28,7 +30,8 @@ CPP_DEPS += \
 ./src/graphics/ImageLoader.d \
 ./src/graphics/Noise.d \
 ./src/graphics/Pipeline.d \
-./src/graphics/RenderWindow.d 
+./src/graphics/RenderWindow.d \
+./src/graphics/VolumeLoader.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
