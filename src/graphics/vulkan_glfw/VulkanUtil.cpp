@@ -7,7 +7,7 @@
 
 #include "VulkanUtil.h"
 #include <vulkan/vk_enum_string_helper.h>
-#include "../../../dependencies/shaderc/libshaderc/include/shaderc/shaderc.h"
+#include "shaderc/shaderc.h"
 
 namespace matrix
 {

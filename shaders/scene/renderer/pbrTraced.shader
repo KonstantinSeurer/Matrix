@@ -103,7 +103,7 @@ function float sampleVolumeDensity(vec3 P)
 {
 	if (dot(P, P) < 1.0)
 	{
-		return 10.0;	
+		return 1.0;	
 	}
 	return 0.0;
 }
@@ -213,7 +213,8 @@ main
 		float totalDensity = 0.0;
 		const vec3 nearIntersection = ray.origin + ray.direction * max(volumeIntersection.x, 0.0);
 		vec3 inscattering = vec3(0.0);
-		const float scatterCoefficient = 0.5;
+		const vec3 scatterCoefficients = vec3(1.0, 0.1, 0.1);
+		const float absorbtion = 1.0;
 		for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++)
 		{
 			const vec3 samplePosition = nearIntersection + ray.direction * segmentSize * (float(sampleIndex) + blueNoiseFloat(noiseSeed));
@@ -224,16 +225,16 @@ main
 			const Ray sampleRay = Ray(samplePosition, -light.direction);
 			const vec2 sampleIntersection = intersectAABB(sampleRay, volume);
 			const float sunDensity = sampleVolumeDensity(sampleRay, sampleIntersection.y, seed);
-			const vec3 sunInscattering = exp(-sunDensity * scatterCoefficient) * light.color;
+			const vec3 sunInscattering = exp(-sunDensity * (scatterCoefficients + absorbtion)) * light.color;
 			
 			const Ray skySampleRay = Ray(samplePosition, normalize(blueNoiseVec3(noiseSeed) * 2.0 - 1.0));
 			const float skySampleIntersection = intersectAABB(skySampleRay, volume).y;
-			const vec3 skyInscattering = sampleSky(skySampleRay.direction) * exp(-sampleVolumeDensity(skySampleRay, skySampleIntersection, seed) * scatterCoefficient);
+			const vec3 skyInscattering = sampleSky(skySampleRay.direction) * exp(-sampleVolumeDensity(skySampleRay, skySampleIntersection, seed) * (scatterCoefficients + absorbtion));
 			
-			inscattering += exp(-totalDensity * scatterCoefficient) * currentDensity * (sunInscattering + skyInscattering);
+			inscattering += exp(-totalDensity * (scatterCoefficients + absorbtion)) * currentDensity * (sunInscattering + skyInscattering);
 		}
 		
-		result = result * exp(-totalDensity * scatterCoefficient) + inscattering * scatterCoefficient;
+		result = result * exp(-totalDensity * absorbtion) + inscattering * scatterCoefficients;
 		
 		imageStore(data.result, ivec2(globalCoords.xy), vec4(dither8(tonemapACES(result), seed), 1.0));
 	}
