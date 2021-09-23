@@ -114,6 +114,57 @@ void Image2DData::getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const
 	a = address[3];
 }
 
+
+Image3DData::Image3DData(u32 width, u32 height, u32 length, Ref<const ImageFormat> format, void *data) :
+		width(width), height(height), length(length), format(format), data(data), pixelSize(
+				format->componentSize * format->componentCount)
+{
+}
+
+Image3DData::~Image3DData()
+{
+	delete data;
+}
+
+void* Image3DData::getPixelAddress(u32 x, u32 y, u32 z) const
+{
+	return data + (x + y * width + z * width * height) * pixelSize;
+}
+
+void Image3DData::getUnorm8(u32 x, u32 y, u32 z, u8 &r) const
+{
+	u8 *address = (u8*) getPixelAddress(x, y, z);
+
+	r = address[0];
+}
+
+void Image3DData::getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g) const
+{
+	u8 *address = (u8*) getPixelAddress(x, y, z);
+
+	r = address[0];
+	g = address[1];
+}
+
+void Image3DData::getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b) const
+{
+	u8 *address = (u8*) getPixelAddress(x, y, z);
+
+	r = address[0];
+	g = address[1];
+	b = address[2];
+}
+
+void Image3DData::getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b, u8 &a) const
+{
+	u8 *address = (u8*) getPixelAddress(x, y, z);
+
+	r = address[0];
+	g = address[1];
+	b = address[2];
+	a = address[3];
+}
+
 }
 
 }

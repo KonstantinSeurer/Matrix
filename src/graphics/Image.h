@@ -205,6 +205,28 @@ public:
 	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const;
 };
 
+class Image3DData {
+private:
+	void *data;
+	const u32 pixelSize;
+private:
+	void* getPixelAddress(u32 x, u32 y, u32 z) const;
+public:
+	const u32 width;
+	const u32 height;
+	const u32 length;
+	const Ref<const ImageFormat> format;
+
+	Image3DData(u32 width, u32 height, u32 length, Ref<const ImageFormat> format, void *data);
+
+	~Image3DData();
+
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b, u8 &a) const;
+};
+
 }
 
 }
