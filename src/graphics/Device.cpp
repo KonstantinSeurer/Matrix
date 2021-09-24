@@ -6,6 +6,7 @@
  */
 
 #include "Device.h"
+#include "../Logging.h"
 
 namespace matrix
 {
@@ -83,22 +84,61 @@ Ref<ArrayBuffer> DeviceInstance::createArrayBuffer(const Array<VariableSource> &
 	return createArrayBuffer(input, elementCount, type, memory);
 }
 
+// TODO: format independent copy
+
 Ref<Image2D> DeviceInstance::createImage2D(const Image2DData &data, ImageUsage usage)
 {
 	Ref<Image2D> image = createImage2D(data.width, data.height, 1, data.format, usage | ImageUsage::ACCESS);
 
-	image->access([&data](Image2DAccessor accessor)
+	if (data.format->componentCount == 4 && data.format->componentSize == 1 && data.format->floatingPoint == false)
 	{
-		for (u32 y = 0; y < data.height; y++)
+		image->access([&data](Image2DAccessor accessor)
 		{
-			for (u32 x = 0; x < data.width; x++)
+			for (u32 y = 0; y < data.height; y++)
 			{
-				u8 r, g, b, a;
-				data.getUnorm8(x, y, r, g, b, a);
-				accessor.setUnorm8(x, y, r, g, b, a);
+				for (u32 x = 0; x < data.width; x++)
+				{
+					u8 r, g, b, a;
+					data.getUnorm8(x, y, r, g, b, a);
+					accessor.setUnorm8(x, y, r, g, b, a);
+				}
 			}
-		}
-	}, ImageLayout::SHADER_READ_ONLY);
+		}, ImageLayout::SHADER_READ_ONLY);
+	}
+	else
+	{
+		err("Unsupported format in DeviceInstance::createImage2D!");
+	}
+
+	return image;
+}
+
+Ref<Image3D> DeviceInstance::createImage3D(const Image3DData &data, ImageUsage usage)
+{
+	Ref<Image3D> image = createImage3D(data.width, data.height, data.length, 1, data.format, usage | ImageUsage::ACCESS);
+
+	if (data.format->componentCount == 4 && data.format->componentSize == 1 && data.format->floatingPoint == false)
+	{
+		image->access([&data](Image3DAccessor accessor)
+		{
+			for (u32 z = 0; z < data.length; z++)
+			{
+				for (u32 y = 0; y < data.height; y++)
+				{
+					for (u32 x = 0; x < data.width; x++)
+					{
+						u8 r, g, b, a;
+						data.getUnorm8(x, y, z, r, g, b, a);
+						accessor.setUnorm8(x, y, z, r, g, b, a);
+					}
+				}
+			}
+		}, ImageLayout::SHADER_READ_ONLY);
+	}
+	else
+	{
+		err("Unsupported format in DeviceInstance::createImage3D!");
+	}
 
 	return image;
 }

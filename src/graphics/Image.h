@@ -12,26 +12,32 @@
 #include "Descriptor.h"
 #include "Memory.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+namespace graphics
+{
 
-enum class ImageFormatType : u8 {
+enum class ImageFormatType : u8
+{
 	COLOR, DEPTH, STENCIL, DEPTH_STENCIL
 };
 
-class ImageFormat {
+class ImageFormat
+{
 public:
 	ImageFormatType type;
 	u8 componentCount;
 	u8 componentSize;
 	bool floatingPoint;
 
-	virtual ~ImageFormat() {
+	virtual ~ImageFormat()
+	{
 	}
 };
 
-class Image2DAccessor {
+class Image2DAccessor
+{
 private:
 	void *data;
 	u32 width;
@@ -40,16 +46,49 @@ private:
 	void* getPixelAddress(u32 x, u32 y) const;
 public:
 	Image2DAccessor(void *data, u32 width, u32 pixelSize) :
-		data(data), width(width), pixelSize(pixelSize) {
+		data(data), width(width), pixelSize(pixelSize)
+	{
 	}
 
 	void setUnorm8(u32 x, u32 y, u8 r);
 	void setUnorm8(u32 x, u32 y, u8 r, u8 g);
 	void setUnorm8(u32 x, u32 y, u8 r, u8 g, u8 b);
 	void setUnorm8(u32 x, u32 y, u8 r, u8 g, u8 b, u8 a);
+
+	void setFloat32(u32 x, u32 y, f32 r);
+	void setFloat32(u32 x, u32 y, f32 r, f32 g);
+	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
+	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
 };
 
-enum class ImageLayout {
+class Image3DAccessor
+{
+private:
+	void *data;
+	u32 width;
+	u32 height;
+	u32 pixelSize;
+private:
+	void* getPixelAddress(u32 x, u32 y, u32 z) const;
+public:
+	Image3DAccessor(void *data, u32 width, u32 height, u32 pixelSize) :
+		data(data), width(width), height(height), pixelSize(pixelSize)
+	{
+	}
+
+	void setUnorm8(u32 x, u32 y, u32 z, u8 r);
+	void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g);
+	void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g, u8 b);
+	void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g, u8 b, u8 a);
+
+	void setFloat32(u32 x, u32 y, u32 z, f32 r);
+	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g);
+	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b);
+	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b, f32 a);
+};
+
+enum class ImageLayout
+{
 	SHADER_READ_ONLY,
 	SHADER_STORAGE,
 	TRANSFER_SOURCE,
@@ -62,7 +101,8 @@ enum class ImageLayout {
 	UNDEFINED
 };
 
-class ImageUsage {
+class ImageUsage
+{
 private:
 	u32 bits;
 public:
@@ -79,38 +119,46 @@ public:
 	static ImageUsage ALL;
 
 	ImageUsage() :
-		bits(NONE) {
+		bits(NONE)
+	{
 	}
 
 	ImageUsage(u32 bits) :
-		bits(bits) {
+		bits(bits)
+	{
 	}
 
 	ImageUsage(const ImageUsage &usage) = default;
 
-	operator bool() const {
+	operator bool() const
+	{
 		return bits != 0;
 	}
 
-	ImageUsage operator|(ImageUsage usage) {
+	ImageUsage operator|(ImageUsage usage)
+	{
 		return bits | usage.bits;
 	}
 
-	ImageUsage operator&(ImageUsage usage) {
+	ImageUsage operator&(ImageUsage usage)
+	{
 		return bits & usage.bits;
 	}
 
 };
 
-enum class SamplingMode {
+enum class SamplingMode
+{
 	NEAREST, LINEAR
 };
 
-enum class WrapMode {
+enum class WrapMode
+{
 	CLAMP, REPEAT, MIRRORED_REPEAT
 };
 
-class Sampler2D {
+class Sampler2D
+{
 private:
 public:
 	const SamplingMode samplingMode;
@@ -119,42 +167,94 @@ public:
 	const WrapMode yWrappingMode;
 
 	Sampler2D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode) :
-		samplingMode(samplingMode), levelSelectionMode(levelSelectionMode), xWrappingMode(xWrappingMode), yWrappingMode(yWrappingMode) {
+		samplingMode(samplingMode), levelSelectionMode(levelSelectionMode), xWrappingMode(xWrappingMode), yWrappingMode(yWrappingMode)
+	{
 	}
 
-	virtual ~Sampler2D() {
+	virtual ~Sampler2D()
+	{
 	}
 };
 
-class Image {
+class Sampler3D
+{
+private:
+public:
+	const SamplingMode samplingMode;
+	const SamplingMode levelSelectionMode;
+	const WrapMode xWrappingMode;
+	const WrapMode yWrappingMode;
+	const WrapMode zWrappingMode;
+
+	Sampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode, WrapMode zWrappingMode) :
+		samplingMode(samplingMode), levelSelectionMode(levelSelectionMode), xWrappingMode(xWrappingMode), yWrappingMode(yWrappingMode), zWrappingMode(
+			zWrappingMode)
+	{
+	}
+
+	virtual ~Sampler3D()
+	{
+	}
+};
+
+class Image
+{
 public:
 	const ImageUsage usage;
 	const Ref<const ImageFormat> format;
 
 	Image(ImageUsage usage, Ref<const ImageFormat> format) :
-		usage(usage), format(format) {
+		usage(usage), format(format)
+	{
 	}
 
-	virtual ~Image() {
+	virtual ~Image()
+	{
 	}
 };
 
-class Image2D: public Image {
+class Image2D: public Image
+{
 public:
 	const u32 width;
 	const u32 height;
 
 	Image2D(ImageUsage usage, Ref<const ImageFormat> format, u32 width, u32 height) :
-		Image(usage, format), width(width), height(height) {
+		Image(usage, format), width(width), height(height)
+	{
 	}
 
-	virtual ~Image2D() {
+	virtual ~Image2D()
+	{
 	}
 
 	virtual void access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout) = 0;
 };
 
-class ImageView2D: public Descriptor {
+class Image3D: public Image
+{
+public:
+	const u32 width;
+	const u32 height;
+	const u32 length;
+
+	Image3D(ImageUsage usage, Ref<const ImageFormat> format, u32 width, u32 height, u32 length) :
+		Image(usage, format), width(width), height(height), length(length)
+	{
+	}
+
+	virtual ~Image3D()
+	{
+	}
+	void setFloat32(u32 x, u32 y, f32 r);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
+	virtual void access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout) = 0;
+};
+
+class ImageView2D: public Descriptor
+{
 public:
 	const u32 width;
 	const u32 height;
@@ -163,28 +263,71 @@ public:
 	const Ref<Image2D> image;
 
 	ImageView2D(u32 width, u32 height, u32 baseLevel, u32 levelCount, Ref<Image2D> image) :
-		Descriptor(DescriptorType::IMAGE_2D), width(width), height(height), baseLevel(baseLevel), levelCount(levelCount), image(image) {
+		Descriptor(DescriptorType::IMAGE_2D), width(width), height(height), baseLevel(baseLevel), levelCount(levelCount), image(image)
+	{
 	}
 
-	virtual ~ImageView2D() {
+	virtual ~ImageView2D()
+	{
 	}
 };
 
-struct ImageSampler2D: public Descriptor {
+class ImageView3D: public Descriptor
+{
+public:
+	const u32 width;
+	const u32 height;
+	const u32 length;
+	const u32 baseLevel;
+	const u32 levelCount;
+	const Ref<Image3D> image;
+
+	ImageView3D(u32 width, u32 height, u32 length, u32 baseLevel, u32 levelCount, Ref<Image3D> image) :
+		Descriptor(DescriptorType::IMAGE_2D), width(width), height(height), length(length), baseLevel(baseLevel), levelCount(levelCount), image(image)
+	{
+	}
+
+	virtual ~ImageView3D()
+	{
+	}
+};
+
+struct ImageSampler2D: public Descriptor
+{
 	Ref<ImageView2D> image;
 	Ref<Sampler2D> sampler;
 
 	ImageSampler2D() :
 		Descriptor(DescriptorType::IMAGE_SAMPLER_2D), image(null), sampler(
-		null) {
+		null)
+	{
 	}
 
 	ImageSampler2D(Ref<ImageView2D> image, Ref<Sampler2D> sampler) :
-		Descriptor(DescriptorType::IMAGE_SAMPLER_2D), image(image), sampler(sampler) {
+		Descriptor(DescriptorType::IMAGE_SAMPLER_2D), image(image), sampler(sampler)
+	{
 	}
 };
 
-class Image2DData {
+struct ImageSampler3D: public Descriptor
+{
+	Ref<ImageView3D> image;
+	Ref<Sampler3D> sampler;
+
+	ImageSampler3D() :
+		Descriptor(DescriptorType::IMAGE_SAMPLER_3D), image(null), sampler(
+		null)
+	{
+	}
+
+	ImageSampler3D(Ref<ImageView3D> image, Ref<Sampler3D> sampler) :
+		Descriptor(DescriptorType::IMAGE_SAMPLER_3D), image(image), sampler(sampler)
+	{
+	}
+};
+
+class Image2DData
+{
 private:
 	void *data;
 	const u32 pixelSize;
@@ -205,7 +348,8 @@ public:
 	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const;
 };
 
-class Image3DData {
+class Image3DData
+{
 private:
 	void *data;
 	const u32 pixelSize;

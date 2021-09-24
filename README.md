@@ -1,3 +1,1 @@
 # Matrix
-## Building
-## Developing

@@ -17,7 +17,7 @@ namespace matrix
 namespace graphics
 {
 
-Ref<Image3DData> loadVolume(Ref<DeviceInstance> device, const RL &rl);
+UnorderedMap<String, Ref<Image3DData>> loadVolume(Ref<DeviceInstance> device, const RL &rl);
 
 }
 

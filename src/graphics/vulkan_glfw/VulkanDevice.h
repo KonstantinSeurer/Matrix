@@ -15,11 +15,14 @@
 #include "VulkanMemoryAllocator.h"
 #include "VulkanImage.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+namespace graphics
+{
 
-class VulkanDeviceInstance: public DeviceInstance {
+class VulkanDeviceInstance: public DeviceInstance
+{
 private:
 	VkDevice device;
 	VkQueue queue;
@@ -42,15 +45,18 @@ public:
 
 	virtual ~VulkanDeviceInstance();
 
-	VkDevice getDevice() const {
+	VkDevice getDevice() const
+	{
 		return device;
 	}
 
-	VkQueue getQueue() const {
+	VkQueue getQueue() const
+	{
 		return queue;
 	}
 
-	VulkanSemaphoreChain* getSemaphoreChain() {
+	VulkanSemaphoreChain* getSemaphoreChain()
+	{
 		return semaphoreChain.get();
 	}
 
@@ -81,6 +87,13 @@ public:
 
 	virtual Ref<Sampler2D> createSampler2D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode);
 
+	virtual Ref<Image3D> createImage3D(u32 width, u32 height, u32 length, u32 levels, Ref<const ImageFormat> format, ImageUsage usage);
+
+	virtual Ref<ImageView3D> createImageView3D(Ref<Image3D> image, u32 baseLevel, u32 levelCount);
+
+	virtual Ref<Sampler3D> createSampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
+		WrapMode zWrappingMode);
+
 	Ref<ImageFormat> createImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint);
 
 	virtual Ref<Fence> createFence();
@@ -93,7 +106,8 @@ public:
 	virtual void wait(Array<Ref<Fence>> fences);
 };
 
-class VulkanDevice: public Device {
+class VulkanDevice: public Device
+{
 private:
 	VkPhysicalDevice device;
 	String name;

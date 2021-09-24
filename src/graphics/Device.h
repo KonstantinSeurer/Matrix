@@ -19,20 +19,25 @@
 #include "Fence.h"
 #include "AccelerationStructure.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+namespace graphics
+{
 
-class DeviceInstance {
+class DeviceInstance
+{
 protected:
 	Array<Function<void()>> freeFunctions;
 	Ref<Sampler2D> colorSampler = null;
 public:
-	DeviceInstance() {
+	DeviceInstance()
+	{
 	}
 
-	virtual ~DeviceInstance() {
-		for (auto& freeFunction : freeFunctions)
+	virtual ~DeviceInstance()
+	{
+		for (auto &freeFunction : freeFunctions)
 		{
 			freeFunction();
 		}
@@ -45,8 +50,6 @@ public:
 	}
 
 	virtual Ref<Swapchain> createSwapchain(Ref<WindowSurface> surface) = 0;
-
-	virtual Ref<ImageView2D> createImageView2D(Ref<Image2D> image, u32 baseLevel, u32 levelCount) = 0;
 
 	virtual Ref<RenderPass> createRenderpass(const Array<Attachment> &attachments, const Array<Subpass> &subpasses) = 0;
 
@@ -69,9 +72,19 @@ public:
 
 	virtual Ref<Image2D> createImage2D(u32 width, u32 height, u32 levels, Ref<const ImageFormat> format, ImageUsage usage) = 0;
 
-	Ref<Image2D> createImage2D(const Image2DData& data, ImageUsage usage);
+	Ref<Image2D> createImage2D(const Image2DData &data, ImageUsage usage);
+
+	virtual Ref<ImageView2D> createImageView2D(Ref<Image2D> image, u32 baseLevel, u32 levelCount) = 0;
 
 	virtual Ref<Sampler2D> createSampler2D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode) = 0;
+
+	virtual Ref<Image3D> createImage3D(u32 width, u32 height, u32 length, u32 levels, Ref<const ImageFormat> format, ImageUsage usage) = 0;
+
+	Ref<Image3D> createImage3D(const Image3DData &data, ImageUsage usage);
+
+	virtual Ref<ImageView3D> createImageView3D(Ref<Image3D> image, u32 baseLevel, u32 levelCount) = 0;
+
+	virtual Ref<Sampler3D> createSampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode, WrapMode zWrappingMode) = 0;
 
 	virtual Ref<ImageFormat> createImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint) = 0;
 
@@ -89,21 +102,26 @@ public:
 	virtual void wait(Array<Ref<Fence>> fences) = 0;
 };
 
-enum class DeviceType {
+enum class DeviceType
+{
 	DISCRETE, INTEGRATED, VIRTUAL, CPU, OTHER
 };
 
-struct DeviceFeatures {
+struct DeviceFeatures
+{
 	bool swapchain;
 	bool raytracing;
 };
 
-class Device {
+class Device
+{
 public:
-	Device() {
+	Device()
+	{
 	}
 
-	virtual ~Device() {
+	virtual ~Device()
+	{
 	}
 
 	virtual Ref<DeviceInstance> createInstance() = 0;

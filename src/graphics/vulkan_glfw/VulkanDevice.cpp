@@ -246,6 +246,22 @@ Ref<Sampler2D> VulkanDeviceInstance::createSampler2D(SamplingMode samplingMode, 
 	return allocate<VulkanSampler2D>(device, samplingMode, levelSelectionMode, xWrappingMode, yWrappingMode);
 }
 
+Ref<Image3D> VulkanDeviceInstance::createImage3D(u32 width, u32 height, u32 length, u32 levels, Ref<const ImageFormat> format, ImageUsage usage)
+{
+	return null;
+}
+
+Ref<ImageView3D> VulkanDeviceInstance::createImageView3D(Ref<Image3D> image, u32 baseLevel, u32 levelCount)
+{
+	return null;
+}
+
+Ref<Sampler3D> VulkanDeviceInstance::createSampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
+	WrapMode zWrappingMode)
+{
+	return null;
+}
+
 Ref<ImageFormat> VulkanDeviceInstance::createImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint)
 {
 	if (type == ImageFormatType::COLOR)
