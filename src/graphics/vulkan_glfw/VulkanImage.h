@@ -19,19 +19,41 @@ namespace matrix
 namespace graphics
 {
 
-class VulkanSampler2D: public Sampler2D
+class VulkanSampler
 {
 private:
 	VkDevice device;
 	VkSampler sampler;
 public:
-	VulkanSampler2D(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode,
-			WrapMode yWrappingMode);
-	virtual ~VulkanSampler2D();
+	VulkanSampler(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
+		WrapMode zWrappingMode);
+
+	~VulkanSampler();
 
 	VkSampler getSampler() const
 	{
 		return sampler;
+	}
+};
+
+class VulkanSampler2D: public Sampler2D, public VulkanSampler
+{
+public:
+	VulkanSampler2D(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode) :
+		Sampler2D(samplingMode, levelSelectionMode, xWrappingMode, yWrappingMode), VulkanSampler(device, samplingMode, levelSelectionMode, xWrappingMode,
+			yWrappingMode, WrapMode::CLAMP)
+	{
+	}
+};
+
+class VulkanSampler3D: public Sampler3D, public VulkanSampler
+{
+public:
+	VulkanSampler3D(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
+		WrapMode zWrappingMode) :
+		Sampler3D(samplingMode, levelSelectionMode, xWrappingMode, yWrappingMode, zWrappingMode), VulkanSampler(device, samplingMode, levelSelectionMode,
+			xWrappingMode, yWrappingMode, zWrappingMode)
+	{
 	}
 };
 
@@ -42,8 +64,7 @@ private:
 public:
 	VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkFormat format);
 
-	VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint,
-			VkPhysicalDevice physicalDevice);
+	VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkPhysicalDevice physicalDevice);
 
 	VkFormat getFormat() const
 	{
@@ -60,19 +81,18 @@ public:
 	bool floatingPoint;
 public:
 	ImageFormatDescription() :
-			type(ImageFormatType::COLOR), componentCount(0), componentSize(0), floatingPoint(false)
+		type(ImageFormatType::COLOR), componentCount(0), componentSize(0), floatingPoint(false)
 	{
 	}
 
 	ImageFormatDescription(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint) :
-			type(type), componentCount(componentCount), componentSize(componentSize), floatingPoint(floatingPoint)
+		type(type), componentCount(componentCount), componentSize(componentSize), floatingPoint(floatingPoint)
 	{
 	}
 
 	bool operator==(ImageFormatDescription desc) const
 	{
-		return type == desc.type && componentCount == desc.componentCount && componentSize == desc.componentSize
-				&& floatingPoint == desc.floatingPoint;
+		return type == desc.type && componentCount == desc.componentCount && componentSize == desc.componentSize && floatingPoint == desc.floatingPoint;
 	}
 };
 
@@ -115,11 +135,10 @@ class VulkanImage2D: public Image2D
 	bool ownsImage;
 private:
 public:
-	VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height,
-			VkImage image, Ref<const ImageFormat> format, ImageUsage usage, VkCommandBuffer accessCommandBuffer);
-	VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height,
-			u32 levels, Ref<const ImageFormat> format, ImageUsage usage, VulkanMemoryAllocator *allocator,
-			VkCommandBuffer accessCommandBuffer);
+	VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, VkImage image, Ref<const ImageFormat> format,
+		ImageUsage usage, VkCommandBuffer accessCommandBuffer);
+	VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 levels, Ref<const ImageFormat> format,
+		ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer);
 	virtual ~VulkanImage2D();
 
 	virtual void access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout);
@@ -137,8 +156,7 @@ private:
 	VkImageView view;
 	ImageFormatType type;
 public:
-	VulkanImageView2D(VkDevice device, u32 width, u32 height, u32 baseLevel, u32 levelCount, Ref<Image2D> image,
-			Ref<const ImageFormat> format);
+	VulkanImageView2D(VkDevice device, u32 width, u32 height, u32 baseLevel, u32 levelCount, Ref<Image2D> image, Ref<const ImageFormat> format);
 	virtual ~VulkanImageView2D();
 
 	VkImage getImage() const
@@ -151,7 +169,8 @@ public:
 		return view;
 	}
 
-	ImageFormatType getType() const {
+	ImageFormatType getType() const
+	{
 		return type;
 	}
 };

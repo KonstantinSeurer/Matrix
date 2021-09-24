@@ -259,7 +259,7 @@ Ref<ImageView3D> VulkanDeviceInstance::createImageView3D(Ref<Image3D> image, u32
 Ref<Sampler3D> VulkanDeviceInstance::createSampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
 	WrapMode zWrappingMode)
 {
-	return null;
+	return allocate<VulkanSampler3D>(device, samplingMode, levelSelectionMode, xWrappingMode, yWrappingMode, zWrappingMode);
 }
 
 Ref<ImageFormat> VulkanDeviceInstance::createImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint)

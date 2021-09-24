@@ -8,9 +8,11 @@
 #include "VulkanImage.h"
 #include "VulkanUtil.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+namespace graphics
+{
 
 static UnorderedMap<WrapMode, VkSamplerAddressMode> addressModes = { { WrapMode::CLAMP, VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE }, { WrapMode::MIRRORED_REPEAT,
 	VK_SAMPLER_ADDRESS_MODE_MIRRORED_REPEAT }, { WrapMode::REPEAT, VK_SAMPLER_ADDRESS_MODE_REPEAT } };
@@ -18,8 +20,10 @@ static UnorderedMap<WrapMode, VkSamplerAddressMode> addressModes = { { WrapMode:
 static UnorderedMap<SamplingMode, VkSamplerMipmapMode> mipmapModes = { { SamplingMode::LINEAR, VK_SAMPLER_MIPMAP_MODE_LINEAR }, { SamplingMode::NEAREST,
 	VK_SAMPLER_MIPMAP_MODE_NEAREST } };
 
-VulkanSampler2D::VulkanSampler2D(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode) :
-	Sampler2D(samplingMode, levelSelectionMode, xWrappingMode, yWrappingMode), device(device) {
+VulkanSampler::VulkanSampler(VkDevice device, SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
+	WrapMode zWrappingMode) :
+	device(device)
+{
 	VkFilter samplingFilter = getVkFilter(samplingMode);
 
 	VkSamplerCreateInfo createInfo;
@@ -29,7 +33,7 @@ VulkanSampler2D::VulkanSampler2D(VkDevice device, SamplingMode samplingMode, Sam
 
 	createInfo.addressModeU = addressModes[xWrappingMode];
 	createInfo.addressModeV = addressModes[yWrappingMode];
-	createInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_CLAMP_TO_EDGE;
+	createInfo.addressModeW = addressModes[zWrappingMode];
 
 	createInfo.anisotropyEnable = VK_FALSE;
 	createInfo.maxAnisotropy = 1.0f;
@@ -51,11 +55,13 @@ VulkanSampler2D::VulkanSampler2D(VkDevice device, SamplingMode samplingMode, Sam
 	assertVkResult(vkCreateSampler(device, &createInfo, null, &sampler), SOURCE_LOCATION());
 }
 
-VulkanSampler2D::~VulkanSampler2D() {
+VulkanSampler::~VulkanSampler()
+{
 	vkDestroySampler(device, sampler, null);
 }
 
-VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkFormat format) {
+VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkFormat format)
+{
 	this->type = type;
 	this->componentCount = componentCount;
 	this->componentSize = componentSize;
@@ -63,7 +69,8 @@ VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8
 	this->format = format;
 }
 
-VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkPhysicalDevice physicalDevice) {
+VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint, VkPhysicalDevice physicalDevice)
+{
 	this->type = type;
 	this->componentCount = componentCount;
 	this->componentSize = componentSize;
@@ -71,7 +78,8 @@ VulkanImageFormat::VulkanImageFormat(ImageFormatType type, u8 componentCount, u8
 	format = getVkFormat(physicalDevice, *this);
 }
 
-static bool isFormatSupported(VkPhysicalDevice device, ImageFormatDescription desc) {
+static bool isFormatSupported(VkPhysicalDevice device, ImageFormatDescription desc)
+{
 	ImageFormat format;
 	format.type = desc.type;
 	format.componentCount = desc.componentCount;
@@ -83,7 +91,8 @@ static bool isFormatSupported(VkPhysicalDevice device, ImageFormatDescription de
 		0, &properties) != VK_ERROR_FORMAT_NOT_SUPPORTED;
 }
 
-VulkanImageFormatTable::VulkanImageFormatTable(VkPhysicalDevice device) {
+VulkanImageFormatTable::VulkanImageFormatTable(VkPhysicalDevice device)
+{
 	addFormats(device, 1, false);
 	addFormats(device, 2, false);
 
@@ -91,19 +100,24 @@ VulkanImageFormatTable::VulkanImageFormatTable(VkPhysicalDevice device) {
 	addFormats(device, 4, true);
 }
 
-void VulkanImageFormatTable::addFormats(VkPhysicalDevice device, u8 componentSize, bool floatingPoint) {
-	for (u8 componentCount = 1; componentCount <= 4; componentCount++) {
+void VulkanImageFormatTable::addFormats(VkPhysicalDevice device, u8 componentSize, bool floatingPoint)
+{
+	for (u8 componentCount = 1; componentCount <= 4; componentCount++)
+	{
 		ImageFormatDescription format(ImageFormatType::COLOR, componentCount, componentSize, floatingPoint);
-		for (u8 testComponentCount = componentCount; testComponentCount <= 4; testComponentCount++) {
+		for (u8 testComponentCount = componentCount; testComponentCount <= 4; testComponentCount++)
+		{
 			ImageFormatDescription testFormat(ImageFormatType::COLOR, testComponentCount, componentSize, floatingPoint);
-			if (isFormatSupported(device, testFormat)) {
+			if (isFormatSupported(device, testFormat))
+			{
 				imageFormats[format] = allocate<VulkanImageFormat>(ImageFormatType::COLOR, testComponentCount, componentSize, floatingPoint, device);
 			}
 		}
 	}
 }
 
-Ref<ImageFormat> VulkanImageFormatTable::getFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint) {
+Ref<ImageFormat> VulkanImageFormatTable::getFormat(ImageFormatType type, u8 componentCount, u8 componentSize, bool floatingPoint)
+{
 	ImageFormatDescription format;
 	format.type = type;
 	format.componentCount = componentCount;
@@ -114,16 +128,20 @@ Ref<ImageFormat> VulkanImageFormatTable::getFormat(ImageFormatType type, u8 comp
 
 VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, VkImage image,
 	Ref<const ImageFormat> format, ImageUsage usage, VkCommandBuffer accessCommandBuffer) :
-	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), image(image), accessCommandBuffer(
-		accessCommandBuffer), ownsImage(false) {
+	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), image(image), accessCommandBuffer(accessCommandBuffer), ownsImage(
+		false)
+{
 
 	memory = VK_NULL_HANDLE;
 
-	if (usage & ImageUsage::ACCESS) {
+	if (usage & ImageUsage::ACCESS)
+	{
 		stagingBuffer = VK_NULL_HANDLE;
 		stagingMemory = VK_NULL_HANDLE;
 		stagingData = null;
-	} else {
+	}
+	else
+	{
 		stagingBuffer = VK_NULL_HANDLE;
 		stagingMemory = VK_NULL_HANDLE;
 		stagingData = null;
@@ -133,14 +151,16 @@ VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChai
 VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 levels,
 	Ref<const ImageFormat> format, ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer) :
 	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), accessCommandBuffer(accessCommandBuffer), ownsImage(
-		true) {
+		true)
+{
 
 	VkFormat vkFormat = CastDown<const VulkanImageFormat>(format)->getFormat();
 	auto imageMemory = allocator->createImage2D(width, height, levels, vkFormat, usage);
 	image = imageMemory.first;
 	memory = imageMemory.second;
 
-	if (usage & ImageUsage::ACCESS) {
+	if (usage & ImageUsage::ACCESS)
+	{
 		u32 size = format->componentSize * format->componentCount * width * height;
 		auto stagingBufferMemory = allocator->createBuffer(size, MemoryType::CPU, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 0);
 
@@ -148,30 +168,38 @@ VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChai
 		stagingMemory = stagingBufferMemory.second;
 
 		assertVkResult(vkMapMemory(device, stagingMemory, 0, size, 0, &stagingData), SOURCE_LOCATION());
-	} else {
+	}
+	else
+	{
 		stagingBuffer = VK_NULL_HANDLE;
 		stagingMemory = VK_NULL_HANDLE;
 		stagingData = null;
 	}
 }
 
-VulkanImage2D::~VulkanImage2D() {
-	if (ownsImage) {
+VulkanImage2D::~VulkanImage2D()
+{
+	if (ownsImage)
+	{
 		vkDestroyImage(device, image, null);
-		if (memory) {
+		if (memory)
+		{
 			vkFreeMemory(device, memory, null);
 		}
 	}
 
-	if (stagingBuffer) {
+	if (stagingBuffer)
+	{
 		vkDestroyBuffer(device, stagingBuffer, null);
 	}
-	if (stagingMemory) {
+	if (stagingMemory)
+	{
 		vkFreeMemory(device, stagingMemory, null);
 	}
 }
 
-void VulkanImage2D::access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout) {
+void VulkanImage2D::access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout)
+{
 	Image2DAccessor accessor(stagingData, width, format->componentCount * format->componentSize);
 	accessCallback(accessor);
 
@@ -214,7 +242,8 @@ void VulkanImage2D::access(Function<void(Image2DAccessor)> accessCallback, Image
 	submit.pWaitSemaphores = waitSemaphores.data();
 
 	Array<VkPipelineStageFlags> waitStages(waitSemaphores.size());
-	for (u32 i = 0; i < waitSemaphores.size(); i++) {
+	for (u32 i = 0; i < waitSemaphores.size(); i++)
+	{
 		waitStages[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
 	}
 	submit.pWaitDstStageMask = waitStages.data();
@@ -234,7 +263,8 @@ static UnorderedMap<ImageFormatType, VkImageAspectFlags> aspectMasks = { { Image
 	VK_IMAGE_ASPECT_STENCIL_BIT } };
 
 VulkanImageView2D::VulkanImageView2D(VkDevice device, u32 width, u32 height, u32 baseLevel, u32 levelCount, Ref<Image2D> image, Ref<const ImageFormat> format) :
-	ImageView2D(width, height, baseLevel, levelCount, image), device(device), type(format->type) {
+	ImageView2D(width, height, baseLevel, levelCount, image), device(device), type(format->type)
+{
 	VkImageViewCreateInfo createInfo;
 	createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
 	createInfo.pNext = null;
@@ -256,7 +286,8 @@ VulkanImageView2D::VulkanImageView2D(VkDevice device, u32 width, u32 height, u32
 
 }
 
-VulkanImageView2D::~VulkanImageView2D() {
+VulkanImageView2D::~VulkanImageView2D()
+{
 	vkDestroyImageView(device, view, null);
 }
 
