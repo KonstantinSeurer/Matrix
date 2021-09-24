@@ -248,12 +248,12 @@ Ref<Sampler2D> VulkanDeviceInstance::createSampler2D(SamplingMode samplingMode, 
 
 Ref<Image3D> VulkanDeviceInstance::createImage3D(u32 width, u32 height, u32 length, u32 levels, Ref<const ImageFormat> format, ImageUsage usage)
 {
-	return null;
+	return allocate<VulkanImage3D>(device, queue, semaphoreChain.get(), width, height, length, levels, format, usage, allocator.get(), tempCommandBuffer);
 }
 
 Ref<ImageView3D> VulkanDeviceInstance::createImageView3D(Ref<Image3D> image, u32 baseLevel, u32 levelCount)
 {
-	return null;
+	return allocate<VulkanImageView3D>(device, image->width, image->height, image->length, baseLevel, levelCount, image, image->format);
 }
 
 Ref<Sampler3D> VulkanDeviceInstance::createSampler3D(SamplingMode samplingMode, SamplingMode levelSelectionMode, WrapMode xWrappingMode, WrapMode yWrappingMode,
