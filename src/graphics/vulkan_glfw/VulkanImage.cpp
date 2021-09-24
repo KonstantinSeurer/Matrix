@@ -126,6 +126,8 @@ Ref<ImageFormat> VulkanImageFormatTable::getFormat(ImageFormatType type, u8 comp
 	return imageFormats.at(format);
 }
 
+// TODO: put duplicate code into a VulkanImage base class
+
 VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, VkImage image,
 	Ref<const ImageFormat> format, ImageUsage usage, VkCommandBuffer accessCommandBuffer) :
 	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), image(image), accessCommandBuffer(accessCommandBuffer), ownsImage(
@@ -411,10 +413,38 @@ VulkanImageView2D::VulkanImageView2D(VkDevice device, u32 width, u32 height, u32
 	createInfo.subresourceRange.levelCount = levelCount;
 
 	assertVkResult(vkCreateImageView(device, &createInfo, null, &view), SOURCE_LOCATION());
-
 }
 
 VulkanImageView2D::~VulkanImageView2D()
+{
+	vkDestroyImageView(device, view, null);
+}
+
+VulkanImageView3D::VulkanImageView3D(VkDevice device, u32 width, u32 height, u32 length, u32 baseLevel, u32 levelCount, Ref<Image3D> image,
+	Ref<const ImageFormat> format) :
+	ImageView3D(width, height, length, baseLevel, levelCount, image), device(device), type(format->type)
+{
+	VkImageViewCreateInfo createInfo;
+	createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+	createInfo.pNext = null;
+	createInfo.flags = 0;
+	createInfo.image = CastDown<VulkanImage2D>(image)->getImage();
+	createInfo.viewType = VK_IMAGE_VIEW_TYPE_3D;
+	createInfo.format = CastDown<const VulkanImageFormat>(format)->getFormat();
+	createInfo.components.r = VK_COMPONENT_SWIZZLE_IDENTITY;
+	createInfo.components.g = VK_COMPONENT_SWIZZLE_IDENTITY;
+	createInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;
+	createInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;
+	createInfo.subresourceRange.aspectMask = aspectMasks[format->type];
+	createInfo.subresourceRange.baseArrayLayer = 0;
+	createInfo.subresourceRange.baseMipLevel = baseLevel;
+	createInfo.subresourceRange.layerCount = 1;
+	createInfo.subresourceRange.levelCount = levelCount;
+
+	assertVkResult(vkCreateImageView(device, &createInfo, null, &view), SOURCE_LOCATION());
+}
+
+VulkanImageView3D::~VulkanImageView3D()
 {
 	vkDestroyImageView(device, view, null);
 }

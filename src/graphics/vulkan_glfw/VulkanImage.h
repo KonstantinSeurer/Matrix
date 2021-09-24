@@ -207,6 +207,32 @@ public:
 	}
 };
 
+class VulkanImageView3D: public ImageView3D
+{
+private:
+	VkDevice device;
+	VkImageView view;
+	ImageFormatType type;
+public:
+	VulkanImageView3D(VkDevice device, u32 width, u32 height, u32 length, u32 baseLevel, u32 levelCount, Ref<Image3D> image, Ref<const ImageFormat> format);
+	virtual ~VulkanImageView3D();
+
+	VkImage getImage() const
+	{
+		return CastDown<VulkanImage3D>(image)->getImage();
+	}
+
+	VkImageView getView() const
+	{
+		return view;
+	}
+
+	ImageFormatType getType() const
+	{
+		return type;
+	}
+};
+
 }
 
 }
