@@ -36,19 +36,31 @@ public:
 	}
 };
 
-class Image2DAccessor
+class Image2DData
 {
 private:
 	void *data;
-	u32 width;
-	u32 pixelSize;
+	const u32 pixelSize;
 private:
 	void* getPixelAddress(u32 x, u32 y) const;
 public:
-	Image2DAccessor(void *data, u32 width, u32 pixelSize) :
-		data(data), width(width), pixelSize(pixelSize)
+	const u32 width;
+	const u32 height;
+	const Ref<const ImageFormat> format;
+	bool transferOwnership;
+
+	Image2DData(void *data, u32 width, u32 height, Ref<const ImageFormat> format, bool transferOwnership) :
+		data(data), pixelSize(format->componentSize * format->componentCount), width(width), height(height), format(format), transferOwnership(
+			transferOwnership)
 	{
 	}
+
+	~Image2DData();
+
+	void getUnorm8(u32 x, u32 y, u8 &r) const;
+	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g) const;
+	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b) const;
+	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const;
 
 	void setUnorm8(u32 x, u32 y, u8 r);
 	void setUnorm8(u32 x, u32 y, u8 r, u8 g);
@@ -59,22 +71,49 @@ public:
 	void setFloat32(u32 x, u32 y, f32 r, f32 g);
 	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
 	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
+
+	const void* getData() const
+	{
+		return data;
+	}
+
+	void* getData()
+	{
+		return data;
+	}
+
+	u32 getDataSize() const
+	{
+		return width * height * pixelSize;
+	}
 };
 
-class Image3DAccessor
+class Image3DData
 {
 private:
 	void *data;
-	u32 width;
-	u32 height;
-	u32 pixelSize;
+	const u32 pixelSize;
 private:
 	void* getPixelAddress(u32 x, u32 y, u32 z) const;
 public:
-	Image3DAccessor(void *data, u32 width, u32 height, u32 pixelSize) :
-		data(data), width(width), height(height), pixelSize(pixelSize)
+	const u32 width;
+	const u32 height;
+	const u32 length;
+	const Ref<const ImageFormat> format;
+	bool transferOwnership;
+
+	Image3DData(void *data, u32 width, u32 height, u32 length, Ref<const ImageFormat> format, bool transferOwnership) :
+		data(data), pixelSize(format->componentSize * format->componentCount), width(width), height(height), length(length), format(format), transferOwnership(
+			transferOwnership)
 	{
 	}
+
+	~Image3DData();
+
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b) const;
+	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b, u8 &a) const;
 
 	void setUnorm8(u32 x, u32 y, u32 z, u8 r);
 	void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g);
@@ -85,6 +124,21 @@ public:
 	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g);
 	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b);
 	void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b, f32 a);
+
+	const void* getData() const
+	{
+		return data;
+	}
+
+	void* getData()
+	{
+		return data;
+	}
+
+	u32 getDataSize() const
+	{
+		return width * height * length * pixelSize;
+	}
 };
 
 enum class ImageLayout
@@ -103,6 +157,90 @@ enum class ImageLayout
 
 class ImageUsage
 {
+	class Image2DData
+	{
+	private:
+		void *data;
+		const u32 pixelSize;
+	private:
+		void* getPixelAddress(u32 x, u32 y) const;
+	public:
+		const u32 width;
+		const u32 height;
+		const Ref<const ImageFormat> format;
+
+		Image2DData(u32 width, u32 height, Ref<const ImageFormat> format, void *data);
+
+		~Image2DData();
+
+		void getUnorm8(u32 x, u32 y, u8 &r) const;
+		void getUnorm8(u32 x, u32 y, u8 &r, u8 &g) const;
+		void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b) const;
+		void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const;
+
+		void setUnorm8(u32 x, u32 y, u8 r);
+		void setUnorm8(u32 x, u32 y, u8 r, u8 g);
+		void setUnorm8(u32 x, u32 y, u8 r, u8 g, u8 b);
+		void setUnorm8(u32 x, u32 y, u8 r, u8 g, u8 b, u8 a);
+
+		void setFloat32(u32 x, u32 y, f32 r);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
+		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
+
+		const void* getData() const
+		{
+			return data;
+		}
+
+		u32 getDataSize() const
+		{
+			return width * height * pixelSize;
+		}
+	};
+
+	class Image3DData
+	{
+	private:
+		void *data;
+		const u32 pixelSize;
+	private:
+		void* getPixelAddress(u32 x, u32 y, u32 z) const;
+	public:
+		const u32 width;
+		const u32 height;
+		const u32 length;
+		const Ref<const ImageFormat> format;
+
+		Image3DData(u32 width, u32 height, u32 length, Ref<const ImageFormat> format, void *data);
+
+		~Image3DData();
+
+		void getUnorm8(u32 x, u32 y, u32 z, u8 &r) const;
+		void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g) const;
+		void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b) const;
+		void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b, u8 &a) const;
+
+		void setUnorm8(u32 x, u32 y, u32 z, u8 r);
+		void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g);
+		void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g, u8 b);
+		void setUnorm8(u32 x, u32 y, u32 z, u8 r, u8 g, u8 b, u8 a);
+
+		void setFloat32(u32 x, u32 y, u32 z, f32 r);
+		void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g);
+		void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b);
+		void setFloat32(u32 x, u32 y, u32 z, f32 r, f32 g, f32 b, f32 a);
+
+		const void* getData() const
+		{
+			return data;
+		}
+
+		u32 getDataSize() const
+		{
+			return width * height * length * pixelSize;
+		}
+	};
 private:
 	u32 bits;
 public:
@@ -228,7 +366,7 @@ public:
 	{
 	}
 
-	virtual void access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout) = 0;
+	virtual void access(Function<void(Image2DData)> accessCallback, ImageLayout targetLayout) = 0;
 };
 
 class Image3D: public Image
@@ -247,10 +385,10 @@ public:
 	{
 	}
 	void setFloat32(u32 x, u32 y, f32 r);
-		void setFloat32(u32 x, u32 y, f32 r, f32 g);
-		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
-		void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
-	virtual void access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout) = 0;
+	void setFloat32(u32 x, u32 y, f32 r, f32 g);
+	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b);
+	void setFloat32(u32 x, u32 y, f32 r, f32 g, f32 b, f32 a);
+	virtual void access(Function<void(Image3DData)> accessCallback, ImageLayout targetLayout) = 0;
 };
 
 class ImageView2D: public Descriptor
@@ -324,51 +462,6 @@ struct ImageSampler3D: public Descriptor
 		Descriptor(DescriptorType::IMAGE_SAMPLER_3D), image(image), sampler(sampler)
 	{
 	}
-};
-
-class Image2DData
-{
-private:
-	void *data;
-	const u32 pixelSize;
-private:
-	void* getPixelAddress(u32 x, u32 y) const;
-public:
-	const u32 width;
-	const u32 height;
-	const Ref<const ImageFormat> format;
-
-	Image2DData(u32 width, u32 height, Ref<const ImageFormat> format, void *data);
-
-	~Image2DData();
-
-	void getUnorm8(u32 x, u32 y, u8 &r) const;
-	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g) const;
-	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b) const;
-	void getUnorm8(u32 x, u32 y, u8 &r, u8 &g, u8 &b, u8 &a) const;
-};
-
-class Image3DData
-{
-private:
-	void *data;
-	const u32 pixelSize;
-private:
-	void* getPixelAddress(u32 x, u32 y, u32 z) const;
-public:
-	const u32 width;
-	const u32 height;
-	const u32 length;
-	const Ref<const ImageFormat> format;
-
-	Image3DData(u32 width, u32 height, u32 length, Ref<const ImageFormat> format, void *data);
-
-	~Image3DData();
-
-	void getUnorm8(u32 x, u32 y, u32 z, u8 &r) const;
-	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g) const;
-	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b) const;
-	void getUnorm8(u32 x, u32 y, u32 z, u8 &r, u8 &g, u8 &b, u8 &a) const;
 };
 
 }

@@ -32,7 +32,7 @@ Ref<Image2DData> loadImage(Ref<DeviceInstance> device, u8* data, u32 size) {
 
 	void* pixelData = stbi_load_from_memory(data, size, &width, &height, &componentCount, format->componentCount);
 
-	return allocate<Image2DData>(width, height, format, pixelData);
+	return allocate<Image2DData>(pixelData, width, height, format, true);
 }
 
 }

@@ -64,7 +64,7 @@ void doublePendulumMain()
 	Ref<Sampler2D> materialSampler = device->createSampler2D(SamplingMode::NEAREST, SamplingMode::NEAREST, WrapMode::REPEAT, WrapMode::REPEAT);
 	Ref<ImageFormat> albedoFormat = device->createImageFormat(ImageFormatType::COLOR, 4, 1, false);
 	Ref<Image2D> albedo = device->createImage2D(4, 2, 1, albedoFormat, ImageUsage::ACCESS | ImageUsage::SAMPLED);
-	albedo->access([](Image2DAccessor accessor)
+	albedo->access([](Image2DData accessor)
 	{
 		accessor.setUnorm8(0, 0, 0, 0, 0, 0xFF);
 		accessor.setUnorm8(1, 0, 0xFF, 0xFF, 0xFF, 0xFF);

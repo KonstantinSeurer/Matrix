@@ -55,7 +55,7 @@ UnorderedMap<String, Ref<Image3DData>> loadVolume(Ref<DeviceInstance> device, co
 			data[index] = iter.getValue();
 		}
 
-		result[name.gridName()] = allocate<Image3DData>(resolution.x(), resolution.y(), resolution.z(), format, data);
+		result[name.gridName()] = allocate<Image3DData>(data, resolution.x(), resolution.y(), resolution.z(), format, true);
 	}
 
 	file.close();

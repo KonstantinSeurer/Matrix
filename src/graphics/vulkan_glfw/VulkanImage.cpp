@@ -198,9 +198,9 @@ VulkanImage2D::~VulkanImage2D()
 	}
 }
 
-void VulkanImage2D::access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout)
+void VulkanImage2D::access(Function<void(Image2DData)> accessCallback, ImageLayout targetLayout)
 {
-	Image2DAccessor accessor(stagingData, width, format->componentCount * format->componentSize);
+	Image2DData accessor(stagingData, width, height, format, false);
 	accessCallback(accessor);
 
 	VkCommandBufferBeginInfo beginInfo;
@@ -328,9 +328,9 @@ VulkanImage3D::~VulkanImage3D()
 	}
 }
 
-void VulkanImage3D::access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout)
+void VulkanImage3D::access(Function<void(Image3DData)> accessCallback, ImageLayout targetLayout)
 {
-	Image3DAccessor accessor(stagingData, width, height, format->componentCount * format->componentSize);
+	Image3DData accessor(stagingData, width, height, length, format, false);
 	accessCallback(accessor);
 
 	VkCommandBufferBeginInfo beginInfo;

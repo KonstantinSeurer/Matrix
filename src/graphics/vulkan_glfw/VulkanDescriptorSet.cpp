@@ -11,25 +11,31 @@
 #include "VulkanImage.h"
 #include "VulkanAccelerationStructure.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+namespace graphics
+{
 
 VulkanDescriptorSet::VulkanDescriptorSet(Ref<const DescriptorSetSource> source, VkDevice device, VulkanDescriptorSetLayout *layout) :
-	DescriptorSet(source), device(device), layout(layout) {
+	DescriptorSet(source), device(device), layout(layout)
+{
 	alloc = layout->alloc();
 }
 
-VulkanDescriptorSet::~VulkanDescriptorSet() {
+VulkanDescriptorSet::~VulkanDescriptorSet()
+{
 	layout->free(alloc);
 }
 
-void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCallback) {
+void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCallback)
+{
 	Array<DescriptorSetAccess> accesses;
 	VulkanDescriptorSetAccessor accessor(&accesses);
 	accessCallback(accessor);
 
-	if (accesses.empty()) {
+	if (accesses.empty())
+	{
 		return;
 	}
 
@@ -37,26 +43,31 @@ void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCa
 	Array<VkDescriptorImageInfo*> images;
 	Array<VkWriteDescriptorSetAccelerationStructureKHR*> accelerationStructures;
 	Array<VkWriteDescriptorSet> writes;
-	for (const auto &access : accesses) {
+	for (const auto &access : accesses)
+	{
 		VkWriteDescriptorSet write { };
 		write.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 		write.descriptorCount = 1;
 		write.descriptorType = getVkDescriptorType(access.descriptor->getDescriptorType());
 		write.dstArrayElement = access.index;
 		bool found = false;
-		for (u32 binding = 0; binding < source->descriptors.size(); binding++) {
-			if (access.name == source->descriptors[binding]->name) {
+		for (u32 binding = 0; binding < source->descriptors.size(); binding++)
+		{
+			if (access.name == source->descriptors[binding]->name)
+			{
 				write.dstBinding = binding;
 				found = true;
 				break;
 			}
 		}
-		if (!found) {
+		if (!found)
+		{
 			err("Could not find descriptor " + access.name + "!");
 		}
 		write.dstSet = alloc.descriptorSet;
 
-		switch (access.descriptor->getDescriptorType()) {
+		switch (access.descriptor->getDescriptorType())
+		{
 			case DescriptorType::UNIFORM_BUFFER:
 			case DescriptorType::STORAGE_BUFFER: {
 				auto buffer = CastDown<VulkanStructBuffer>(access.descriptor);
@@ -75,7 +86,7 @@ void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCa
 				auto vulkanImageView = CastDown<VulkanImageView2D>(imageSampler->image);
 				imageInfo->imageLayout = getVkImageLayout(ImageLayout::SHADER_READ_ONLY, vulkanImageView->getType());
 				imageInfo->imageView = vulkanImageView->getView();
-				imageInfo->sampler = CastDown<VulkanSampler2D>(imageSampler->sampler)->getSampler();
+				imageInfo->sampler = CastDown<VulkanSampler>(imageSampler->sampler)->getSampler();
 				write.pImageInfo = imageInfo;
 				break;
 			}
@@ -84,6 +95,27 @@ void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCa
 				images.push_back(imageInfo);
 				imageInfo->imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 				auto image = CastDown<VulkanImageView2D>(access.descriptor);
+				imageInfo->imageView = image->getView();
+				imageInfo->sampler = VK_NULL_HANDLE;
+				write.pImageInfo = imageInfo;
+				break;
+			}
+			case DescriptorType::IMAGE_SAMPLER_3D: {
+				VkDescriptorImageInfo *imageInfo = new VkDescriptorImageInfo();
+				images.push_back(imageInfo);
+				auto imageSampler = CastDown<ImageSampler3D>(access.descriptor);
+				auto vulkanImageView = CastDown<VulkanImageView3D>(imageSampler->image);
+				imageInfo->imageLayout = getVkImageLayout(ImageLayout::SHADER_READ_ONLY, vulkanImageView->getType());
+				imageInfo->imageView = vulkanImageView->getView();
+				imageInfo->sampler = CastDown<VulkanSampler>(imageSampler->sampler)->getSampler();
+				write.pImageInfo = imageInfo;
+				break;
+			}
+			case DescriptorType::IMAGE_3D: {
+				VkDescriptorImageInfo *imageInfo = new VkDescriptorImageInfo();
+				images.push_back(imageInfo);
+				imageInfo->imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+				auto image = CastDown<VulkanImageView3D>(access.descriptor);
 				imageInfo->imageView = image->getView();
 				imageInfo->sampler = VK_NULL_HANDLE;
 				write.pImageInfo = imageInfo;
@@ -107,18 +139,22 @@ void VulkanDescriptorSet::access(Function<void(DescriptorSetAccessor&)> accessCa
 
 	vkUpdateDescriptorSets(device, writes.size(), writes.data(), 0, null);
 
-	for (auto buffer : buffers) {
+	for (auto buffer : buffers)
+	{
 		delete buffer;
 	}
-	for (auto image : images) {
+	for (auto image : images)
+	{
 		delete image;
 	}
-	for (auto accelerationStructure : accelerationStructures) {
+	for (auto accelerationStructure : accelerationStructures)
+	{
 		delete accelerationStructure;
 	}
 }
 
-void VulkanDescriptorSetAccessor::set(const String &name, u32 index, Descriptor* descriptor) {
+void VulkanDescriptorSetAccessor::set(const String &name, u32 index, Descriptor *descriptor)
+{
 	DescriptorSetAccess access;
 	access.name = name;
 	access.index = index;

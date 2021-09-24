@@ -177,7 +177,8 @@ VkFormat getVkFormat(PrimitiveTypeType type)
 
 static UnorderedMap<DescriptorType, VkDescriptorType> descriptorTypes = { { DescriptorType::UNIFORM_BUFFER, VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER }, {
 	DescriptorType::STORAGE_BUFFER, VK_DESCRIPTOR_TYPE_STORAGE_BUFFER }, { DescriptorType::IMAGE_SAMPLER_2D, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }, {
-	DescriptorType::IMAGE_2D, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE }, { DescriptorType::TOP_LEVEL_ACCELERATION_STRUCTURE,
+	DescriptorType::IMAGE_2D, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE }, { DescriptorType::IMAGE_SAMPLER_3D, VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER }, {
+	DescriptorType::IMAGE_3D, VK_DESCRIPTOR_TYPE_STORAGE_IMAGE }, { DescriptorType::TOP_LEVEL_ACCELERATION_STRUCTURE,
 	VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR } };
 
 VkDescriptorType getVkDescriptorType(DescriptorType type)
@@ -351,14 +352,26 @@ VkShaderModule compileShader(VkDevice device, const PipelineSource &source, cons
 					sourceText += ") uniform sampler2D " + name;
 					break;
 				}
-				case DescriptorType::IMAGE_2D: {
+				case DescriptorType::IMAGE_SAMPLER_3D: {
+					sourceText += ") uniform sampler3D " + name;
+					break;
+				}
+				case DescriptorType::IMAGE_2D:
+				case DescriptorType::IMAGE_3D: {
 					auto image = CastDown<const ImageSource>(descriptor);
 					sourceText += ", " + imageFormatComponentNames[image->format.componentCount] + toString(image->format.componentSize * 8);
 					if (image->format.floatingPoint)
 					{
 						sourceText += "f";
 					}
-					sourceText += ") uniform image2D " + name;
+					if (descriptor->type == DescriptorType::IMAGE_2D)
+					{
+						sourceText += ") uniform image2D " + name;
+					}
+					else
+					{
+						sourceText += ") uniform image3D " + name;
+					}
 					break;
 				}
 				case DescriptorType::TOP_LEVEL_ACCELERATION_STRUCTURE: {

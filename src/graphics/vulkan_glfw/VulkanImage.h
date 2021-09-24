@@ -141,7 +141,7 @@ public:
 		ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer);
 	virtual ~VulkanImage2D();
 
-	virtual void access(Function<void(Image2DAccessor)> accessCallback, ImageLayout targetLayout);
+	virtual void access(Function<void(Image2DData)> accessCallback, ImageLayout targetLayout);
 
 	VkImage getImage() const
 	{
@@ -173,7 +173,7 @@ public:
 		Ref<const ImageFormat> format, ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer);
 	virtual ~VulkanImage3D();
 
-	virtual void access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout);
+	virtual void access(Function<void(Image3DData)> accessCallback, ImageLayout targetLayout);
 
 	VkImage getImage() const
 	{

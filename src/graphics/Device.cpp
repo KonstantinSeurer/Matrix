@@ -90,25 +90,11 @@ Ref<Image2D> DeviceInstance::createImage2D(const Image2DData &data, ImageUsage u
 {
 	Ref<Image2D> image = createImage2D(data.width, data.height, 1, data.format, usage | ImageUsage::ACCESS);
 
-	if (data.format->componentCount == 4 && data.format->componentSize == 1 && data.format->floatingPoint == false)
+	image->access([&data](Image2DData accessor)
 	{
-		image->access([&data](Image2DAccessor accessor)
-		{
-			for (u32 y = 0; y < data.height; y++)
-			{
-				for (u32 x = 0; x < data.width; x++)
-				{
-					u8 r, g, b, a;
-					data.getUnorm8(x, y, r, g, b, a);
-					accessor.setUnorm8(x, y, r, g, b, a);
-				}
-			}
-		}, ImageLayout::SHADER_READ_ONLY);
-	}
-	else
-	{
-		err("Unsupported format in DeviceInstance::createImage2D!");
-	}
+		MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
+		memcpy(accessor.getData(), data.getData(), data.getDataSize());
+	}, ImageLayout::SHADER_READ_ONLY);
 
 	return image;
 }
@@ -117,28 +103,11 @@ Ref<Image3D> DeviceInstance::createImage3D(const Image3DData &data, ImageUsage u
 {
 	Ref<Image3D> image = createImage3D(data.width, data.height, data.length, 1, data.format, usage | ImageUsage::ACCESS);
 
-	if (data.format->componentCount == 4 && data.format->componentSize == 1 && data.format->floatingPoint == false)
+	image->access([&data](Image3DData accessor)
 	{
-		image->access([&data](Image3DAccessor accessor)
-		{
-			for (u32 z = 0; z < data.length; z++)
-			{
-				for (u32 y = 0; y < data.height; y++)
-				{
-					for (u32 x = 0; x < data.width; x++)
-					{
-						u8 r, g, b, a;
-						data.getUnorm8(x, y, z, r, g, b, a);
-						accessor.setUnorm8(x, y, z, r, g, b, a);
-					}
-				}
-			}
-		}, ImageLayout::SHADER_READ_ONLY);
-	}
-	else
-	{
-		err("Unsupported format in DeviceInstance::createImage3D!");
-	}
+		MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
+		memcpy(accessor.getData(), data.getData(), data.getDataSize());
+	}, ImageLayout::SHADER_READ_ONLY);
 
 	return image;
 }
@@ -151,7 +120,7 @@ Ref<ImageSampler2D> DeviceInstance::createColorTexture(f32 r, f32 g, f32 b, f32 
 	}
 
 	Ref<Image2D> image = createImage2D(1, 1, 1, format, ImageUsage::SAMPLED | ImageUsage::ACCESS);
-	image->access([&](Image2DAccessor accessor)
+	image->access([&](Image2DData accessor)
 	{
 		if (!format->floatingPoint)
 		{
