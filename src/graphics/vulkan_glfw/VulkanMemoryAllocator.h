@@ -46,6 +46,8 @@ public:
 
 	Pair<VkImage, VkDeviceMemory> createImage2D(u32 width, u32 height, u32 levels, VkFormat format, ImageUsage usage);
 
+	Pair<VkImage, VkDeviceMemory> createImage3D(u32 width, u32 height, u32 length, u32 levels, VkFormat format, ImageUsage usage);
+
 	VulkanAccelerationStructureData createAccelerationStructure(VkAccelerationStructureTypeKHR type, VkAccelerationStructureBuildSizesInfoKHR buildSize);
 };
 

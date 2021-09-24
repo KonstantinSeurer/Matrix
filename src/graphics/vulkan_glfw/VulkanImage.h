@@ -149,6 +149,38 @@ public:
 	}
 };
 
+class VulkanImage3D: public Image3D
+{
+	VkDevice device;
+	VkQueue queue;
+	VulkanSemaphoreChain *semaphoreChain;
+
+	VkImage image;
+	VkDeviceMemory memory;
+
+	VkBuffer stagingBuffer;
+	VkDeviceMemory stagingMemory;
+	void *stagingData;
+
+	VkCommandBuffer accessCommandBuffer;
+
+	bool ownsImage;
+private:
+public:
+	VulkanImage3D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 length, VkImage image,
+		Ref<const ImageFormat> format, ImageUsage usage, VkCommandBuffer accessCommandBuffer);
+	VulkanImage3D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 length, u32 levels,
+		Ref<const ImageFormat> format, ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer);
+	virtual ~VulkanImage3D();
+
+	virtual void access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout);
+
+	VkImage getImage() const
+	{
+		return image;
+	}
+};
+
 class VulkanImageView2D: public ImageView2D
 {
 private:

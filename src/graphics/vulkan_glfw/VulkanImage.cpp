@@ -131,7 +131,6 @@ VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChai
 	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), image(image), accessCommandBuffer(accessCommandBuffer), ownsImage(
 		false)
 {
-
 	memory = VK_NULL_HANDLE;
 
 	if (usage & ImageUsage::ACCESS)
@@ -153,7 +152,6 @@ VulkanImage2D::VulkanImage2D(VkDevice device, VkQueue queue, VulkanSemaphoreChai
 	Image2D(usage, format, width, height), device(device), queue(queue), semaphoreChain(semaphoreChain), accessCommandBuffer(accessCommandBuffer), ownsImage(
 		true)
 {
-
 	VkFormat vkFormat = CastDown<const VulkanImageFormat>(format)->getFormat();
 	auto imageMemory = allocator->createImage2D(width, height, levels, vkFormat, usage);
 	image = imageMemory.first;
@@ -218,6 +216,136 @@ void VulkanImage2D::access(Function<void(Image2DAccessor)> accessCallback, Image
 	region.bufferOffset = 0;
 	region.bufferRowLength = 0;
 	region.imageExtent = { width, height, 1 };
+	region.imageOffset = { 0, 0, 0 };
+	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+	region.imageSubresource.baseArrayLayer = 0;
+	region.imageSubresource.layerCount = 1;
+	region.imageSubresource.mipLevel = 0;
+
+	vkCmdCopyBufferToImage(accessCommandBuffer, stagingBuffer, image, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &region);
+
+	pipelineBarrier(accessCommandBuffer, image, ImageLayout::TRANSFER_DESTINATION, ImageLayout::SHADER_READ_ONLY, 0, 1, format->type);
+
+	assertVkResult(vkEndCommandBuffer(accessCommandBuffer), SOURCE_LOCATION());
+
+	VkSubmitInfo submit;
+	submit.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	submit.pNext = null;
+
+	submit.commandBufferCount = 1;
+	submit.pCommandBuffers = &accessCommandBuffer;
+
+	Array<VkSemaphore> waitSemaphores = semaphoreChain->pollWaitSemaphores();
+	submit.waitSemaphoreCount = waitSemaphores.size();
+	submit.pWaitSemaphores = waitSemaphores.data();
+
+	Array<VkPipelineStageFlags> waitStages(waitSemaphores.size());
+	for (u32 i = 0; i < waitSemaphores.size(); i++)
+	{
+		waitStages[i] = VK_PIPELINE_STAGE_ALL_COMMANDS_BIT;
+	}
+	submit.pWaitDstStageMask = waitStages.data();
+
+	VkSemaphore signalSemaphore = semaphoreChain->getSemaphore();
+	semaphoreChain->addWaitSemaphore(signalSemaphore);
+	submit.signalSemaphoreCount = 1;
+	submit.pSignalSemaphores = &signalSemaphore;
+
+	assertVkResult(vkQueueSubmit(queue, 1, &submit, VK_NULL_HANDLE), SOURCE_LOCATION());
+
+	vkDeviceWaitIdle(device); // TODO: remove
+}
+
+VulkanImage3D::VulkanImage3D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 length, VkImage image,
+	Ref<const ImageFormat> format, ImageUsage usage, VkCommandBuffer accessCommandBuffer) :
+	Image3D(usage, format, width, height, length), device(device), queue(queue), semaphoreChain(semaphoreChain), image(image), accessCommandBuffer(
+		accessCommandBuffer), ownsImage(false)
+{
+	memory = VK_NULL_HANDLE;
+
+	if (usage & ImageUsage::ACCESS)
+	{
+		stagingBuffer = VK_NULL_HANDLE;
+		stagingMemory = VK_NULL_HANDLE;
+		stagingData = null;
+	}
+	else
+	{
+		stagingBuffer = VK_NULL_HANDLE;
+		stagingMemory = VK_NULL_HANDLE;
+		stagingData = null;
+	}
+}
+
+VulkanImage3D::VulkanImage3D(VkDevice device, VkQueue queue, VulkanSemaphoreChain *semaphoreChain, u32 width, u32 height, u32 length, u32 levels,
+	Ref<const ImageFormat> format, ImageUsage usage, VulkanMemoryAllocator *allocator, VkCommandBuffer accessCommandBuffer) :
+	Image3D(usage, format, width, height, length), device(device), queue(queue), semaphoreChain(semaphoreChain), accessCommandBuffer(accessCommandBuffer), ownsImage(
+		true)
+{
+	VkFormat vkFormat = CastDown<const VulkanImageFormat>(format)->getFormat();
+	auto imageMemory = allocator->createImage3D(width, height, length, levels, vkFormat, usage);
+	image = imageMemory.first;
+	memory = imageMemory.second;
+
+	if (usage & ImageUsage::ACCESS)
+	{
+		u32 size = format->componentSize * format->componentCount * width * height * length;
+		auto stagingBufferMemory = allocator->createBuffer(size, MemoryType::CPU, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, 0);
+
+		stagingBuffer = stagingBufferMemory.first;
+		stagingMemory = stagingBufferMemory.second;
+
+		assertVkResult(vkMapMemory(device, stagingMemory, 0, size, 0, &stagingData), SOURCE_LOCATION());
+	}
+	else
+	{
+		stagingBuffer = VK_NULL_HANDLE;
+		stagingMemory = VK_NULL_HANDLE;
+		stagingData = null;
+	}
+}
+
+VulkanImage3D::~VulkanImage3D()
+{
+	if (ownsImage)
+	{
+		vkDestroyImage(device, image, null);
+		if (memory)
+		{
+			vkFreeMemory(device, memory, null);
+		}
+	}
+
+	if (stagingBuffer)
+	{
+		vkDestroyBuffer(device, stagingBuffer, null);
+	}
+	if (stagingMemory)
+	{
+		vkFreeMemory(device, stagingMemory, null);
+	}
+}
+
+void VulkanImage3D::access(Function<void(Image3DAccessor)> accessCallback, ImageLayout targetLayout)
+{
+	Image3DAccessor accessor(stagingData, width, height, format->componentCount * format->componentSize);
+	accessCallback(accessor);
+
+	VkCommandBufferBeginInfo beginInfo;
+	beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+	beginInfo.pNext = null;
+	beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
+	beginInfo.pInheritanceInfo = null;
+
+	assertVkResult(vkBeginCommandBuffer(accessCommandBuffer, &beginInfo), SOURCE_LOCATION());
+
+	pipelineBarrier(accessCommandBuffer, image, ImageLayout::UNDEFINED, ImageLayout::TRANSFER_DESTINATION, 0, 1, format->type);
+
+	VkBufferImageCopy region;
+	region.bufferImageHeight = 0;
+	region.bufferOffset = 0;
+	region.bufferRowLength = 0;
+	region.imageExtent = { width, height, length };
 	region.imageOffset = { 0, 0, 0 };
 	region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
 	region.imageSubresource.baseArrayLayer = 0;
