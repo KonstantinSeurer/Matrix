@@ -7,11 +7,13 @@
 
 #include "Material.h"
 
-namespace matrix {
+namespace matrix
+{
 
 using namespace graphics;
 
-namespace scene {
+namespace scene
+{
 
 static UnorderedMap<PrimitiveTypeType, u32> floatAttributeSizes = { { PrimitiveTypeType::FLOAT, 1 }, { PrimitiveTypeType::VEC2, 2 }, { PrimitiveTypeType::VEC3,
 	3 }, { PrimitiveTypeType::VEC4, 4 }, { PrimitiveTypeType::MAT2, 4 }, { PrimitiveTypeType::MAT3, 9 }, { PrimitiveTypeType::MAT4, 16 }, {
@@ -21,16 +23,19 @@ static UnorderedMap<PrimitiveTypeType, u32> intAttributeSizes = { { PrimitiveTyp
 	{ PrimitiveTypeType::VEC3, 0 }, { PrimitiveTypeType::VEC4, 0 }, { PrimitiveTypeType::MAT2, 0 }, { PrimitiveTypeType::MAT3, 0 },
 	{ PrimitiveTypeType::MAT4, 0 }, { PrimitiveTypeType::INT, 1 } };
 
-void MaterialType::addAttribute(const Pair<PrimitiveTypeType, String> &attribute) {
+void MaterialType::addAttribute(const Pair<PrimitiveTypeType, String> &attribute)
+{
 	attributes.push_back(attribute);
 
 	u32 floatSize = floatAttributeSizes[attribute.first];
-	if (floatSize) {
+	if (floatSize)
+	{
 		offsets[attribute.second] = floatAttributeCount;
 	}
 
 	u32 intSize = intAttributeSizes[attribute.first];
-	if (intSize) {
+	if (intSize)
+	{
 		offsets[attribute.second] = intAttributeCount;
 	}
 
@@ -38,12 +43,18 @@ void MaterialType::addAttribute(const Pair<PrimitiveTypeType, String> &attribute
 	intAttributeCount += intSize;
 }
 
-void MaterialType::addDescriptor(const Pair<DescriptorType, String> &descriptor) {
+void MaterialType::addDescriptor(const Pair<DescriptorType, String> &descriptor)
+{
 	descriptors.push_back(descriptor);
-	switch (descriptor.first) {
+	switch (descriptor.first)
+	{
 		case DescriptorType::IMAGE_SAMPLER_2D:
 			offsets[descriptor.second] = imageSampler2DCount;
 			imageSampler2DCount++;
+			break;
+		case DescriptorType::IMAGE_SAMPLER_3D:
+			offsets[descriptor.second] = imageSampler3DCount;
+			imageSampler3DCount++;
 			break;
 		default:
 			break;
@@ -51,26 +62,38 @@ void MaterialType::addDescriptor(const Pair<DescriptorType, String> &descriptor)
 }
 
 Material::Material(const MaterialType *type) :
-	type(type) {
+	type(type)
+{
 	imageSamplers2D.resize(type->getImageSampler2DCount());
+	imageSamplers3D.resize(type->getImageSampler3DCount());
 	ints.resize(type->getIntAttributeCount());
 	floats.resize(type->getFloatAttributeCount());
 }
 
-s32* Material::getIntPointer(const String &name) {
+s32* Material::getIntPointer(const String &name)
+{
 	return &ints.data()[type->getOffset(name)];
 }
 
-f32* Material::getFloatPointer(const String &name) {
+f32* Material::getFloatPointer(const String &name)
+{
 	return &floats.data()[type->getOffset(name)];
 }
 
-Material& Material::setImageSampler2D(const String &name, Ref<ImageSampler2D> value) {
+Material& Material::setImageSampler2D(const String &name, Ref<ImageSampler2D> value)
+{
 	imageSamplers2D[type->getOffset(name)] = value;
 	return *this;
 }
 
-Material& Material::setFloat(const String &name, f32 value) {
+Material& Material::setImageSampler3D(const String &name, Ref<graphics::ImageSampler3D> value)
+{
+	imageSamplers3D[type->getOffset(name)] = value;
+	return *this;
+}
+
+Material& Material::setFloat(const String &name, f32 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value;
@@ -78,7 +101,8 @@ Material& Material::setFloat(const String &name, f32 value) {
 	return *this;
 }
 
-Material& Material::setVec2(const String &name, math::Vec2 value) {
+Material& Material::setVec2(const String &name, math::Vec2 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x;
@@ -87,7 +111,8 @@ Material& Material::setVec2(const String &name, math::Vec2 value) {
 	return *this;
 }
 
-Material& Material::setVec3(const String &name, math::Vec3 value) {
+Material& Material::setVec3(const String &name, math::Vec3 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x;
@@ -97,7 +122,8 @@ Material& Material::setVec3(const String &name, math::Vec3 value) {
 	return *this;
 }
 
-Material& Material::setVec4(const String &name, math::Vec4 value) {
+Material& Material::setVec4(const String &name, math::Vec4 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x;
@@ -108,7 +134,8 @@ Material& Material::setVec4(const String &name, math::Vec4 value) {
 	return *this;
 }
 
-Material& Material::setMat2(const String &name, math::Mat2 value) {
+Material& Material::setMat2(const String &name, math::Mat2 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x.x;
@@ -120,7 +147,8 @@ Material& Material::setMat2(const String &name, math::Mat2 value) {
 	return *this;
 }
 
-Material& Material::setMat3(const String &name, math::Mat3 value) {
+Material& Material::setMat3(const String &name, math::Mat3 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x.x;
@@ -138,7 +166,8 @@ Material& Material::setMat3(const String &name, math::Mat3 value) {
 	return *this;
 }
 
-Material& Material::setMat4(const String &name, math::Mat4 value) {
+Material& Material::setMat4(const String &name, math::Mat4 value)
+{
 	f32 *data = getFloatPointer(name);
 
 	data[0] = value.x.x;
@@ -164,7 +193,8 @@ Material& Material::setMat4(const String &name, math::Mat4 value) {
 	return *this;
 }
 
-Material& Material::setInt(const String &name, s32 value) {
+Material& Material::setInt(const String &name, s32 value)
+{
 	s32 *data = getIntPointer(name);
 
 	data[0] = value;

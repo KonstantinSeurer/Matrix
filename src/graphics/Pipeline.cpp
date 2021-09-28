@@ -281,12 +281,14 @@ static void parseDescriptorSet(const String &source, Ref<DescriptorSetSource> ta
 			handled = true;
 		}
 
-		if (startsWithNext(source, i, "texture2D")) {
+		bool texture2D = startsWithNext(source, i, "texture2D");
+		bool texture3D = startsWithNext(source, i, "texture3D");
+		if (texture2D || texture3D) {
 			skipWhiteSpace(source, i);
 
 			Ref<TextureSource> texture = allocate<TextureSource>();
 			texture->dimensions = 2;
-			texture->type = DescriptorType::IMAGE_SAMPLER_2D;
+			texture->type = texture2D ? DescriptorType::IMAGE_SAMPLER_2D : DescriptorType::IMAGE_SAMPLER_3D;
 
 			if (source[i] == '[') {
 				i++;

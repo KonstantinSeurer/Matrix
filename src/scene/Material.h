@@ -19,11 +19,14 @@
 #include "../math/Mat3.h"
 #include "../math/Mat4.h"
 
-namespace matrix {
+namespace matrix
+{
 
-namespace scene {
+namespace scene
+{
 
-class MaterialType {
+class MaterialType
+{
 private:
 	Array<Pair<graphics::DescriptorType, String>> descriptors;
 	Array<Pair<graphics::PrimitiveTypeType, String>> attributes;
@@ -31,34 +34,47 @@ private:
 	u32 floatAttributeCount = 0;
 	u32 intAttributeCount = 0;
 	u32 imageSampler2DCount = 0;
+	u32 imageSampler3DCount = 0;
 public:
-	MaterialType() {
+	MaterialType()
+	{
 	}
 
 	void addAttribute(const Pair<graphics::PrimitiveTypeType, String> &attribute);
 	void addDescriptor(const Pair<graphics::DescriptorType, String> &descriptor);
 
-	u32 getFloatAttributeCount() const {
+	u32 getFloatAttributeCount() const
+	{
 		return floatAttributeCount;
 	}
 
-	u32 getIntAttributeCount() const {
+	u32 getIntAttributeCount() const
+	{
 		return intAttributeCount;
 	}
 
-	u32 getImageSampler2DCount() const {
+	u32 getImageSampler2DCount() const
+	{
 		return imageSampler2DCount;
 	}
 
-	u32 getOffset(const String &name) const {
+	u32 getImageSampler3DCount() const
+	{
+		return imageSampler3DCount;
+	}
+
+	u32 getOffset(const String &name) const
+	{
 		return offsets.at(name);
 	}
 };
 
-class Material {
+class Material
+{
 private:
 	const MaterialType *type;
 	Array<Ref<graphics::ImageSampler2D>> imageSamplers2D;
+	Array<Ref<graphics::ImageSampler3D>> imageSamplers3D;
 	Array<s32> ints;
 	Array<f32> floats;
 private:
@@ -68,6 +84,7 @@ public:
 	Material(const MaterialType *type);
 
 	Material& setImageSampler2D(const String &name, Ref<graphics::ImageSampler2D> value);
+	Material& setImageSampler3D(const String &name, Ref<graphics::ImageSampler3D> value);
 
 	Material& setFloat(const String &name, f32 value);
 	Material& setVec2(const String &name, math::Vec2 value);
@@ -78,20 +95,29 @@ public:
 	Material& setMat4(const String &name, math::Mat4 value);
 	Material& setInt(const String &name, s32 value);
 
-	const MaterialType* getType() const {
+	const MaterialType* getType() const
+	{
 		return type;
 	}
 
-	s32 getInt(u32 index) const {
+	s32 getInt(u32 index) const
+	{
 		return ints[index];
 	}
 
-	f32 getFloat(u32 index) const {
+	f32 getFloat(u32 index) const
+	{
 		return floats[index];
 	}
 
-	Ref<graphics::ImageSampler2D> getImageSampler2D(u32 index) const {
+	Ref<graphics::ImageSampler2D> getImageSampler2D(u32 index) const
+	{
 		return imageSamplers2D[index];
+	}
+
+	Ref<graphics::ImageSampler3D> getImageSampler3D(u32 index) const
+	{
+		return imageSamplers3D[index];
 	}
 };
 
