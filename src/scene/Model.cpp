@@ -62,56 +62,6 @@ Model::Model(const Model &model) :
 
 }
 
-/*
- static Array<graphics::VariableSource> vertexInputs;
-
- Model::Model(Ref<graphics::DeviceInstance> device, const Array<Vertex> &vertices, const Array<u32> indices, Ref<const Material> material) :
- material(material) {
- if (vertexInputs.empty()) {
- vertexInputs = { { graphics::getPrimitiveType(graphics::PrimitiveTypeType::VEC3), "position" }, { graphics::getPrimitiveType(
- graphics::PrimitiveTypeType::VEC3), "normal" }, { graphics::getPrimitiveType(graphics::PrimitiveTypeType::VEC3), "tangent" }, {
- graphics::getPrimitiveType(graphics::PrimitiveTypeType::VEC2), "textureCoords" } };
- }
-
- Ref<graphics::ArrayBuffer> vb = device->createArrayBuffer(vertexInputs, vertices.size(), graphics::ArrayBufferType::VERTEX, graphics::MemoryType::GPU);
-
- vb->access([&](graphics::ArrayAccessor accessor) {
- for (u32 i = 0; i < vertices.size(); i++) {
- graphics::StructAccessor vertexAccessor = accessor.getStruct(i);
- const Vertex &vertex = vertices[i];
-
- vertexAccessor.setVec3("position", vertex.position);
- vertexAccessor.setVec3("normal", vertex.normal);
- vertexAccessor.setVec3("tangent", vertex.tangent);
- vertexAccessor.setVec2("textureCoords", vertex.textureCoords);
- }
- });
-
- Ref<graphics::ArrayBuffer> ib = device->createArrayBuffer(graphics::getPrimitiveType(graphics::PrimitiveTypeType::INT), indices.size(),
- graphics::ArrayBufferType::INDEX, graphics::MemoryType::GPU);
-
- ib->access([&](graphics::ArrayAccessor accessor) {
- for (u32 i = 0; i < indices.size(); i++) {
- accessor.setInt(i, indices[i]);
- }
- });
-
- vertexBuffer = vb;
- indexBuffer = ib;
- }
-
- Model::Model(const Model &model, Ref<const Material> material) :
- vertexBuffer(model.vertexBuffer), indexBuffer(model.indexBuffer), material(material) {
- }
-
- Model::Model(const Model &model) :
- vertexBuffer(model.vertexBuffer), indexBuffer(model.indexBuffer), material(model.material) {
- }
-
- Model::~Model() {
- }
- */
-
 ModelComponent& ModelComponent::setModel(Ref<Model> model) {
 	this->model = model;
 	return *this;
