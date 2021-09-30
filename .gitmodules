@@ -1,0 +1,12 @@
+[submodule "dependencies/glfw"]
+	path = dependencies/glfw
+	url = https://github.com/glfw/glfw
+[submodule "dependencies/shaderc"]
+	path = dependencies/shaderc
+	url = https://github.com/google/shaderc
+[submodule "dependencies/openvdb"]
+	path = dependencies/openvdb
+	url = https://github.com/AcademySoftwareFoundation/openvdb
+[submodule "dependencies/c-blosc"]
+	path = dependencies/c-blosc
+	url = https://github.com/Blosc/c-blosc

@@ -15,20 +15,20 @@
 namespace matrix
 {
 
-namespace graphics
-{
+	namespace graphics
+	{
 
-class Window;
+		class Window;
 
-}
+	}
 
-struct UpdateData
-{
-	Time time;
-	Time delta;
-	input::MouseMoveEvent mouse;
-	input::KeyboardState keyboard;
-};
+	struct UpdateData
+	{
+		Time time;
+		Time delta;
+		input::MouseMoveEvent mouse;
+		input::KeyboardState keyboard;
+	};
 
 }
 

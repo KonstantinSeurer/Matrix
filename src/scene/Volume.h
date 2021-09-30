@@ -17,14 +17,14 @@ namespace matrix
 namespace scene
 {
 
-class VolumeComponent: public Component
+class Volume
 {
 private:
 	math::Vec3 min;
 	math::Vec3 max;
 	Ref<const Material> material;
 public:
-	VolumeComponent(math::Vec3 min, math::Vec3 max, Ref<const Material> material) :
+	Volume(math::Vec3 min, math::Vec3 max, Ref<const Material> material) :
 		min(min), max(max), material(material)
 	{
 	}
@@ -34,7 +34,7 @@ public:
 		return min;
 	}
 
-	math::Vec4 getMax() const
+	math::Vec3 getMax() const
 	{
 		return max;
 	}
@@ -43,9 +43,17 @@ public:
 	{
 		return material;
 	}
+};
+
+class VolumeComponent: public Component
+{
+public:
+	VolumeComponent()
+	{
+	}
 
 	MATRIX_SCENE_COMPONENT(VolumeComponent, null,
-		{})
+			{})
 };
 
 const MaterialType* getVolumetricScatteringUniformMaterialType();

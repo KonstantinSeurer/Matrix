@@ -2,7 +2,7 @@
 # Automatically-generated file. Do not edit!
 ################################################################################
 
-USER_OBJS :=
+USER_OBJS := /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/glfw/src/libglfw3.a /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/libshaderc_combined.a
 
-LIBS := -lglfw -lHalf -ltbb -lopenvdb -lvulkan -ldl -lpthread -lshaderc_combined -lX11
+LIBS := -lvulkan -lopenvdb -lpthread -ldl
 

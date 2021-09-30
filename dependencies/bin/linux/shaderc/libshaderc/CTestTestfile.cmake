@@ -1,0 +1,24 @@
+# CMake generated Testfile for 
+# Source directory: /home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc
+# Build directory: /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc
+# 
+# This file includes the relevant testing commands required for 
+# testing this directory and lists subdirectories to be tested as well.
+add_test(shaderc_shaderc "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shaderc_test")
+set_tests_properties(shaderc_shaderc PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;74;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_shaderc_cpp "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shaderc_cpp_test")
+set_tests_properties(shaderc_shaderc_cpp PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;74;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_shaderc_private "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shaderc_private_test")
+set_tests_properties(shaderc_shaderc_private PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;74;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_shared_shaderc "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shared_shaderc_test")
+set_tests_properties(shaderc_shared_shaderc PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;85;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_shared_shaderc_cpp "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shared_shaderc_cpp_test")
+set_tests_properties(shaderc_shared_shaderc_cpp PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;85;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_shared_shaderc_private "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_shared_shaderc_private_test")
+set_tests_properties(shaderc_shared_shaderc_private PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;85;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_combined_shaderc "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_combined_shaderc_test")
+set_tests_properties(shaderc_combined_shaderc PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;115;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_combined_shaderc_cpp "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_combined_shaderc_cpp_test")
+set_tests_properties(shaderc_combined_shaderc_cpp PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/cmake/utils.cmake;133;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;115;shaderc_add_tests;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")
+add_test(shaderc_c_smoke_test "/home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/shaderc_c_smoke_test")
+set_tests_properties(shaderc_c_smoke_test PROPERTIES  _BACKTRACE_TRIPLES "/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;130;add_test;/home/konstantin/Desktop/matrix/Matrix/dependencies/shaderc/libshaderc/CMakeLists.txt;0;")

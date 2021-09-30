@@ -1,0 +1,14 @@
+create /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/./libshaderc_combined.a
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/spirv-tools/source/libSPIRV-Tools.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/spirv-tools/source/opt/libSPIRV-Tools-opt.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/glslang/libGenericCodeGen.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/glslang/OSDependent/Unix/libOSDependent.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/OGLCompilersDLL/libOGLCompiler.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/glslang/libMachineIndependent.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/SPIRV/libSPIRV.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/glslang/libglslang.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/third_party/glslang/hlsl/libHLSL.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc_util/libshaderc_util.a 
+addlib /home/konstantin/Desktop/matrix/Matrix/dependencies/bin/linux/shaderc/libshaderc/libshaderc.a
+save
+end

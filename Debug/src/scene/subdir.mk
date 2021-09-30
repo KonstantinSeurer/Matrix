@@ -9,7 +9,8 @@ CPP_SRCS += \
 ../src/scene/Material.cpp \
 ../src/scene/Model.cpp \
 ../src/scene/Scene.cpp \
-../src/scene/Transform.cpp 
+../src/scene/Transform.cpp \
+../src/scene/Volume.cpp 
 
 OBJS += \
 ./src/scene/Camera.o \
@@ -17,7 +18,8 @@ OBJS += \
 ./src/scene/Material.o \
 ./src/scene/Model.o \
 ./src/scene/Scene.o \
-./src/scene/Transform.o 
+./src/scene/Transform.o \
+./src/scene/Volume.o 
 
 CPP_DEPS += \
 ./src/scene/Camera.d \
@@ -25,7 +27,8 @@ CPP_DEPS += \
 ./src/scene/Material.d \
 ./src/scene/Model.d \
 ./src/scene/Scene.d \
-./src/scene/Transform.d 
+./src/scene/Transform.d \
+./src/scene/Volume.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes

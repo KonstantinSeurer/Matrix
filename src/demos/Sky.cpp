@@ -1,5 +1,4 @@
 #include "../graphics/RenderWindow.h"
-#include "../graphics/VolumeLoader.h"
 #include "../Time.h"
 #include "../Logging.h"
 #include "../RL.h"
@@ -48,8 +47,6 @@ void skyMain()
 	Ref<SkyRenderer> skyRenderer = allocate<PhysicalSkyRenderer>(device, 256);
 	Ref<Renderer> renderer = allocate<PbrDeferredPathtracer>(device, skyRenderer);
 	renderer->resize(window.getWidth(), window.getHeight());
-
-	loadVolume(device, RL("file:///volumes/bunny_cloud.vdb"));
 
 	Ref<Scene> scene = allocate<Scene>(device, renderImplementations, window.getBufferCount());
 
