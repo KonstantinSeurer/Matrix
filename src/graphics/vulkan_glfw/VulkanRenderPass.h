@@ -9,26 +9,31 @@
 #define GRAPHICS_VULKAN_GLFW_VULKANRENDERPASS_H_
 
 #include <vulkan/vulkan.h>
-#include "../RenderPass.h"
+#include <graphics/RenderPass.h>
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+	namespace graphics
+	{
 
-class VulkanRenderPass: public RenderPass {
-private:
-	VkDevice device;
-	VkRenderPass renderPass;
-public:
-	VulkanRenderPass(VkDevice device, const Array<Attachment> &attachments, const Array<Subpass> &subpasses);
-	virtual ~VulkanRenderPass();
+		class VulkanRenderPass : public RenderPass
+		{
+		private:
+			VkDevice device;
+			VkRenderPass renderPass;
 
-	VkRenderPass getRenderPass() const {
-		return renderPass;
+		public:
+			VulkanRenderPass(VkDevice device, const Array<Attachment> &attachments, const Array<Subpass> &subpasses);
+			virtual ~VulkanRenderPass();
+
+			VkRenderPass getRenderPass() const
+			{
+				return renderPass;
+			}
+		};
+
 	}
-};
-
-}
 
 }
 

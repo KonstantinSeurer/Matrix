@@ -5,51 +5,46 @@
  *      Author: konstantin
  */
 
-#include "PhysicalSkyRenderer.h"
-#include "SceneLightBuffer.h"
+#include <scene/renderer/PhysicalSkyRenderer.h>
+#include <scene/renderer/SceneLightBuffer.h>
 
 namespace matrix
 {
 
-using namespace graphics;
+	using namespace graphics;
 
-namespace scene
-{
-
-PhysicalSkyRenderer::PhysicalSkyRenderer(Ref<graphics::DeviceInstance> device, u32 resolution) :
-	SkyRenderer(device, resolution)
-{
-	SceneLightBuffer::getSource();
-
-	Ref<ComputePipelineSource> source = parseComputePipeline(RL("file:///shaders/scene/renderer/physicalSky.shader"));
-	pipeline = device->createComputePipeline(source);
-
-	descriptorSet = device->createDescriptorSet(source->getDescriptorSet("data"));
-	descriptorSet->access([&](DescriptorSetAccessor &accessor)
+	namespace scene
 	{
-		accessor.set("result", getEnvironmentView().get());
-		accessor.set("transmittance", getTransmittanceView().get());
-	});
-}
 
-void PhysicalSkyRenderer::render(Ref<graphics::CommandBuffer> cb, const Scene &scene, ComponentReference camera, u32 bufferIndex)
-{
-	auto lightBuffer = scene.getRenderImplementation<SceneLightBuffer>();
+		PhysicalSkyRenderer::PhysicalSkyRenderer(Ref<graphics::DeviceInstance> device, u32 resolution) : SkyRenderer(device, resolution)
+		{
+			SceneLightBuffer::getSource();
 
-	cb->barrier(
-		{ ImageLayoutTransition(getEnvironment(), ImageLayout::UNDEFINED, ImageLayout::SHADER_STORAGE), ImageLayoutTransition(getTransmittance(),
-			ImageLayout::UNDEFINED, ImageLayout::SHADER_STORAGE) });
+			Ref<ComputePipelineSource> source = parseComputePipeline(RL("file:///shaders/scene/renderer/physicalSky.shader"));
+			pipeline = device->createComputePipeline(source);
 
-	cb->computePipeline(pipeline, [&]()
-	{
-		cb->descriptorSets(
-			{	lightBuffer->getDescriptorSet(bufferIndex), descriptorSet}, [&]()
-			{
-				cb->compute(math::Vec3u32(getEnvironment()->width, getEnvironment()->height, 1), ComputeSize::GLOBAL);
-			});
-	});
-}
+			descriptorSet = device->createDescriptorSet(source->getDescriptorSet("data"));
+			descriptorSet->access([&](DescriptorSetAccessor &accessor)
+								  {
+									  accessor.set("result", getEnvironmentView().get());
+									  accessor.set("transmittance", getTransmittanceView().get());
+								  });
+		}
 
-}
+		void PhysicalSkyRenderer::render(Ref<graphics::CommandBuffer> cb, const Scene &scene, ComponentReference camera, u32 bufferIndex)
+		{
+			auto lightBuffer = scene.getRenderImplementation<SceneLightBuffer>();
+
+			cb->barrier(
+				{ImageLayoutTransition(getEnvironment(), ImageLayout::UNDEFINED, ImageLayout::SHADER_STORAGE), ImageLayoutTransition(getTransmittance(),
+																																	 ImageLayout::UNDEFINED, ImageLayout::SHADER_STORAGE)});
+
+			cb->computePipeline(pipeline, [&]()
+								{ cb->descriptorSets(
+									  {lightBuffer->getDescriptorSet(bufferIndex), descriptorSet}, [&]()
+									  { cb->compute(math::Vec3u32(getEnvironment()->width, getEnvironment()->height, 1), ComputeSize::GLOBAL); }); });
+		}
+
+	}
 
 }

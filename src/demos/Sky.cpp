@@ -1,26 +1,26 @@
-#include "../graphics/RenderWindow.h"
-#include "../Time.h"
-#include "../Logging.h"
-#include "../RL.h"
-#include "../scene/Scene.h"
-#include "../scene/Model.h"
-#include "../scene/Camera.h"
-#include "../scene/GLTF.h"
-#include "../scene/Transform.h"
-#include "../scene/Light.h"
-#include "../scene/renderer/ModelVertexArray.h"
-#include "../scene/renderer/ModelAccelerationStructure.h"
-#include "../scene/renderer/SceneAccelerationStructure.h"
-#include "../Events.h"
-#include "../math/Base.h"
-#include "../scene/renderer/PbrDeferredPathtracer.h"
-#include "../scene/renderer/PhysicalSkyRenderer.h"
-#include "../scene/renderer/SceneCameraBuffer.h"
-#include "../scene/renderer/SceneMaterialBuffer.h"
-#include "../scene/renderer/SceneModelMap.h"
-#include "../scene/renderer/SceneLightBuffer.h"
-#include "../scene/renderer/ModelModelBuffer.h"
-#include "../scene/renderer/SceneModelBuffer.h"
+#include <graphics/RenderWindow.h>
+#include <Time.h>
+#include <Logging.h>
+#include <RL.h>
+#include <scene/Scene.h>
+#include <scene/Model.h>
+#include <scene/Camera.h>
+#include <scene/GLTF.h>
+#include <scene/Transform.h>
+#include <scene/Light.h>
+#include <scene/renderer/ModelVertexArray.h>
+#include <scene/renderer/ModelAccelerationStructure.h>
+#include <scene/renderer/SceneAccelerationStructure.h>
+#include <Events.h>
+#include <math/Base.h>
+#include <scene/renderer/PbrDeferredPathtracer.h>
+#include <scene/renderer/PhysicalSkyRenderer.h>
+#include <scene/renderer/SceneCameraBuffer.h>
+#include <scene/renderer/SceneMaterialBuffer.h>
+#include <scene/renderer/SceneModelMap.h>
+#include <scene/renderer/SceneLightBuffer.h>
+#include <scene/renderer/ModelModelBuffer.h>
+#include <scene/renderer/SceneModelBuffer.h>
 #include "DemoCamera.h"
 
 using namespace matrix;
@@ -40,9 +40,9 @@ void skyMain()
 	ModelComponent::type();
 	CameraComponent::type();
 	DirectionalLightComponent::type();
-	Array<RenderImplementationType> renderImplementations = { SceneModelMap::type(), SceneMaterialBuffer::type(), SceneCameraBuffer::type(),
-		ModelVertexArray::type(), ModelAccelerationStructure::type(), SceneAccelerationStructure::type(), SceneLightBuffer::type(), ModelModelBuffer::type(),
-		SceneModelBuffer::type() };
+	Array<RenderImplementationType> renderImplementations = {SceneModelMap::type(), SceneMaterialBuffer::type(), SceneCameraBuffer::type(),
+															 ModelVertexArray::type(), ModelAccelerationStructure::type(), SceneAccelerationStructure::type(), SceneLightBuffer::type(), ModelModelBuffer::type(),
+															 SceneModelBuffer::type()};
 
 	Ref<SkyRenderer> skyRenderer = allocate<PhysicalSkyRenderer>(device, 256);
 	Ref<Renderer> renderer = allocate<PbrDeferredPathtracer>(device, skyRenderer);

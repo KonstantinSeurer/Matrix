@@ -9,31 +9,36 @@
 #define GRAPHICS_VULKAN_GLFW_VULKANCONTEXT_H_
 
 #include <vulkan/vulkan.h>
-#include "../Context.h"
+#include <graphics/Context.h>
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+	namespace graphics
+	{
 
-class VulkanContext : public Context {
-private:
-	VkInstance instance;
-	Array<Ref<Device>> availableDevices;
-public:
-	VulkanContext();
+		class VulkanContext : public Context
+		{
+		private:
+			VkInstance instance;
+			Array<Ref<Device>> availableDevices;
 
-	virtual ~VulkanContext();
+		public:
+			VulkanContext();
 
-	virtual const Array<Ref<Device>>& getAvailableDevices();
+			virtual ~VulkanContext();
 
-	VkInstance getInstance() const {
-		return instance;
+			virtual const Array<Ref<Device>> &getAvailableDevices();
+
+			VkInstance getInstance() const
+			{
+				return instance;
+			}
+
+			virtual Ref<WindowSurface> createSurface(Ref<Window> window) const;
+		};
+
 	}
-
-	virtual Ref<WindowSurface> createSurface(Ref<Window> window) const;
-};
-
-}
 
 }
 

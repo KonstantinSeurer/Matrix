@@ -5,31 +5,31 @@
  *      Author: konstantin
  */
 
-#include "Mouse.h"
+#include <input/Mouse.h>
 
 namespace matrix
 {
 
-namespace input
-{
-
-bool MouseState::isButtonPressed(MouseButton button) const
-{
-	return pressedButtons & (1 << (u32) button);
-}
-
-void MouseState::setButtonPressed(MouseButton button, bool pressed)
-{
-	if (pressed)
+	namespace input
 	{
-		pressedButtons |= (1 << (u32) button);
-	}
-	else
-	{
-		pressedButtons &= ~(1 << (u32) button);
-	}
-}
 
-}
+		bool MouseState::isButtonPressed(MouseButton button) const
+		{
+			return pressedButtons & (1 << (u32)button);
+		}
+
+		void MouseState::setButtonPressed(MouseButton button, bool pressed)
+		{
+			if (pressed)
+			{
+				pressedButtons |= (1 << (u32)button);
+			}
+			else
+			{
+				pressedButtons &= ~(1 << (u32)button);
+			}
+		}
+
+	}
 
 }

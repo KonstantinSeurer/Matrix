@@ -10,27 +10,31 @@
 
 #include <vulkan/vulkan.h>
 
-#include "../../Base.h"
+#include <Base.h>
 
-namespace matrix {
+namespace matrix
+{
 
-namespace graphics {
+	namespace graphics
+	{
 
-class VulkanSemaphoreChain {
-private:
-	VkDevice device;
-	Array<VkSemaphore> semaphoreCache;
-	Array<VkSemaphore> waitSemaphores;
-public:
-	VulkanSemaphoreChain(VkDevice device, u32 size);
-	~VulkanSemaphoreChain();
+		class VulkanSemaphoreChain
+		{
+		private:
+			VkDevice device;
+			Array<VkSemaphore> semaphoreCache;
+			Array<VkSemaphore> waitSemaphores;
 
-	VkSemaphore getSemaphore();
-	const Array<VkSemaphore> pollWaitSemaphores();
-	void addWaitSemaphore(VkSemaphore semaphore);
-};
+		public:
+			VulkanSemaphoreChain(VkDevice device, u32 size);
+			~VulkanSemaphoreChain();
 
-}
+			VkSemaphore getSemaphore();
+			const Array<VkSemaphore> pollWaitSemaphores();
+			void addWaitSemaphore(VkSemaphore semaphore);
+		};
+
+	}
 
 }
 

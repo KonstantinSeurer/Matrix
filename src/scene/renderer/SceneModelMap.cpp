@@ -5,25 +5,30 @@
  *      Author: konstantin
  */
 
-#include "SceneModelMap.h"
+#include <scene/renderer/SceneModelMap.h>
 
-#include "../../Logging.h"
+#include <Logging.h>
 
-namespace matrix {
+namespace matrix
+{
 
-namespace scene {
+	namespace scene
+	{
 
-void SceneModelMap::render(const Scene &scene) {
-	entries.clear();
+		void SceneModelMap::render(const Scene &scene)
+		{
+			entries.clear();
 
-	for (const ModelComponent &c : scene.getComponents<ModelComponent>(ModelComponent::type())) {
-		if (entries.find(c.getModel().get()) == entries.end()) {
-			entries[c.getModel().get()] = { };
+			for (const ModelComponent &c : scene.getComponents<ModelComponent>(ModelComponent::type()))
+			{
+				if (entries.find(c.getModel().get()) == entries.end())
+				{
+					entries[c.getModel().get()] = {};
+				}
+				entries[c.getModel().get()].push_back(&c);
+			}
 		}
-		entries[c.getModel().get()].push_back(&c);
-	}
-}
 
-}
+	}
 
 }

@@ -1,26 +1,26 @@
-#include "../graphics/RenderWindow.h"
-#include "../Time.h"
-#include "../Logging.h"
-#include "../RL.h"
-#include "../scene/Scene.h"
-#include "../scene/Model.h"
-#include "../scene/Camera.h"
-#include "../scene/GLTF.h"
-#include "../scene/Transform.h"
-#include "../scene/Light.h"
-#include "../scene/renderer/ModelVertexArray.h"
-#include "../scene/renderer/ModelAccelerationStructure.h"
-#include "../scene/renderer/SceneAccelerationStructure.h"
-#include "../Events.h"
-#include "../math/Base.h"
-#include "../scene/renderer/PbrDeferredPathtracer.h"
-#include "../scene/renderer/PhysicalSkyRenderer.h"
-#include "../scene/renderer/SceneCameraBuffer.h"
-#include "../scene/renderer/SceneMaterialBuffer.h"
-#include "../scene/renderer/SceneModelMap.h"
-#include "../scene/renderer/SceneLightBuffer.h"
-#include "../scene/renderer/ModelModelBuffer.h"
-#include "../scene/renderer/SceneModelBuffer.h"
+#include <graphics/RenderWindow.h>
+#include <Time.h>
+#include <Logging.h>
+#include <RL.h>
+#include <scene/Scene.h>
+#include <scene/Model.h>
+#include <scene/Camera.h>
+#include <scene/GLTF.h>
+#include <scene/Transform.h>
+#include <scene/Light.h>
+#include <scene/renderer/ModelVertexArray.h>
+#include <scene/renderer/ModelAccelerationStructure.h>
+#include <scene/renderer/SceneAccelerationStructure.h>
+#include <Events.h>
+#include <math/Base.h>
+#include <scene/renderer/PbrDeferredPathtracer.h>
+#include <scene/renderer/PhysicalSkyRenderer.h>
+#include <scene/renderer/SceneCameraBuffer.h>
+#include <scene/renderer/SceneMaterialBuffer.h>
+#include <scene/renderer/SceneModelMap.h>
+#include <scene/renderer/SceneLightBuffer.h>
+#include <scene/renderer/ModelModelBuffer.h>
+#include <scene/renderer/SceneModelBuffer.h>
 #include "DemoCamera.h"
 
 using namespace matrix;
@@ -40,9 +40,9 @@ void doublePendulumMain()
 	ModelComponent::type();
 	CameraComponent::type();
 	DirectionalLightComponent::type();
-	Array<RenderImplementationType> renderImplementations = { SceneModelMap::type(), SceneMaterialBuffer::type(), SceneCameraBuffer::type(),
-		ModelVertexArray::type(), ModelAccelerationStructure::type(), SceneAccelerationStructure::type(), SceneLightBuffer::type(), ModelModelBuffer::type(),
-		SceneModelBuffer::type() };
+	Array<RenderImplementationType> renderImplementations = {SceneModelMap::type(), SceneMaterialBuffer::type(), SceneCameraBuffer::type(),
+															 ModelVertexArray::type(), ModelAccelerationStructure::type(), SceneAccelerationStructure::type(), SceneLightBuffer::type(), ModelModelBuffer::type(),
+															 SceneModelBuffer::type()};
 
 	Ref<SkyRenderer> skyRenderer = allocate<PhysicalSkyRenderer>(device, 256);
 	Ref<Renderer> renderer = allocate<PbrDeferredPathtracer>(device, skyRenderer);
@@ -65,16 +65,17 @@ void doublePendulumMain()
 	Ref<ImageFormat> albedoFormat = device->createImageFormat(ImageFormatType::COLOR, 4, 1, false);
 	Ref<Image2D> albedo = device->createImage2D(4, 2, 1, albedoFormat, ImageUsage::ACCESS | ImageUsage::SAMPLED);
 	albedo->access([](Image2DData accessor)
-	{
-		accessor.setUnorm8(0, 0, 0, 0, 0, 0xFF);
-		accessor.setUnorm8(1, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-		accessor.setUnorm8(0, 1, 0xFF, 0xFF, 0xFF, 0xFF);
-		accessor.setUnorm8(1, 1, 0, 0, 0, 0xFF);
-		accessor.setUnorm8(2, 0, 0, 0, 0, 0xFF);
-		accessor.setUnorm8(3, 0, 0xFF, 0xFF, 0xFF, 0xFF);
-		accessor.setUnorm8(2, 1, 0xFF, 0xFF, 0xFF, 0xFF);
-		accessor.setUnorm8(3, 1, 0, 0, 0, 0xFF);
-	}, ImageLayout::SHADER_READ_ONLY);
+				   {
+					   accessor.setUnorm8(0, 0, 0, 0, 0, 0xFF);
+					   accessor.setUnorm8(1, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+					   accessor.setUnorm8(0, 1, 0xFF, 0xFF, 0xFF, 0xFF);
+					   accessor.setUnorm8(1, 1, 0, 0, 0, 0xFF);
+					   accessor.setUnorm8(2, 0, 0, 0, 0, 0xFF);
+					   accessor.setUnorm8(3, 0, 0xFF, 0xFF, 0xFF, 0xFF);
+					   accessor.setUnorm8(2, 1, 0xFF, 0xFF, 0xFF, 0xFF);
+					   accessor.setUnorm8(3, 1, 0, 0, 0, 0xFF);
+				   },
+				   ImageLayout::SHADER_READ_ONLY);
 	Ref<ImageView2D> albedoView = device->createImageView2D(albedo, 0, 1);
 	Ref<ImageSampler2D> albedoSampler = allocate<ImageSampler2D>(albedoView, materialSampler);
 	material->setImageSampler2D("baseColorTexture", albedoSampler);
@@ -127,19 +128,19 @@ void doublePendulumMain()
 
 	window.callbacks.update = [&](const UpdateData &data)
 	{
-		Vec3& p1 = p1Entity->getComponent<TransformComponent>()->position;
+		Vec3 &p1 = p1Entity->getComponent<TransformComponent>()->position;
 		p1.x = sin(theta1) * l1;
 		p1.y = -cos(theta1) * l1;
 
-		Vec3& p2 = p2Entity->getComponent<TransformComponent>()->position;
+		Vec3 &p2 = p2Entity->getComponent<TransformComponent>()->position;
 		p2.x = p1.x + sin(theta2) * l2;
 		p2.y = p1.y - cos(theta2) * l2;
 
-		TransformComponent* joint1 = joint1Entity->getComponent<TransformComponent>();
+		TransformComponent *joint1 = joint1Entity->getComponent<TransformComponent>();
 		joint1->position = p1 * 0.5f;
 		joint1->rotation = Quat(Vec3(0.0f, 0.0f, 1.0f), theta1);
 
-		TransformComponent* joint2 = joint2Entity->getComponent<TransformComponent>();
+		TransformComponent *joint2 = joint2Entity->getComponent<TransformComponent>();
 		joint2->position = (p1 + p2) * 0.5f;
 		joint2->rotation = Quat(Vec3(0.0f, 0.0f, 1.0f), theta2);
 

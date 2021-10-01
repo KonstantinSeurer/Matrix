@@ -5,38 +5,46 @@
  *      Author: konstantin
  */
 
-#include "Base.h"
+#include <math/Base.h>
 
 #include <cmath>
 
-namespace matrix {
+namespace matrix
+{
 
-namespace math {
+	namespace math
+	{
 
-f32 radians(f32 degrees) {
-	return degrees / 180.0f * PI;
-}
+		f32 radians(f32 degrees)
+		{
+			return degrees / 180.0f * PI;
+		}
 
-f32 sin(f32 x) {
-	return sinf(x);
-}
+		f32 sin(f32 x)
+		{
+			return sinf(x);
+		}
 
-f32 cos(f32 x) {
-	return cosf(x);
-}
+		f32 cos(f32 x)
+		{
+			return cosf(x);
+		}
 
-f32 tan(f32 x) {
-	return tanf(x);
-}
+		f32 tan(f32 x)
+		{
+			return tanf(x);
+		}
 
-f32 fract(f32 f) {
-	return f - (s32) f;
-}
+		f32 fract(f32 f)
+		{
+			return f - (s32)f;
+		}
 
-f64 fract(f64 f) {
-	return f - (s64) f;
-}
+		f64 fract(f64 f)
+		{
+			return f - (s64)f;
+		}
 
-}
+	}
 
 }

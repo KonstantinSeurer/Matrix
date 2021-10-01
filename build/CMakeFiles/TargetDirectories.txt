@@ -1,0 +1,4 @@
+/home/konstantin/Desktop/matrix/Matrix/build/CMakeFiles/rebuild_cache.dir
+/home/konstantin/Desktop/matrix/Matrix/build/CMakeFiles/MatrixDemos.dir
+/home/konstantin/Desktop/matrix/Matrix/build/CMakeFiles/edit_cache.dir
+/home/konstantin/Desktop/matrix/Matrix/build/CMakeFiles/MatrixCoreStatic.dir
