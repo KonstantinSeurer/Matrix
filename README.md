@@ -13,6 +13,7 @@ Matrix is a framework for rendering 3D graphics in real time. The current featur
 ## Dependencies
 
 - LunarG Vulkan SDK
+- OpenVDB
 
 ### Building submodules
 
