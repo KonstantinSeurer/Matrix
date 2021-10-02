@@ -1,4 +1,5 @@
 #include <graphics/RenderWindow.h>
+#include <graphics/VolumeLoader.h>
 #include <Time.h>
 #include <Logging.h>
 #include <RL.h>
@@ -57,6 +58,8 @@ void skyMain()
 	DemoCamera camera(*scene);
 	camera.resize(window.getWidth(), window.getHeight());
 	camera.getTransform()->position.z = -5.0f;
+
+	loadVolume(device, RL("file:///volumes/bunny_cloud.vdb"));
 
 	window.callbacks.update = [&](const UpdateData &data)
 	{
