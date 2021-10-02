@@ -5,9 +5,9 @@ set(CMAKE_CXX_STANDARD 17)
 
 file(GLOB_RECURSE MATRIX_CORE_LIBRARY_SOURCE_FILES src/*.cpp)
 
-set(MATRIX_CORE_DYNAMIC_DEPENDENCIES)
+set(MATRIX_CORE_DYNAMIC_DEPENDENCIES "")
 
-set(MATRIX_CORE_DEPENDENCY_IMCLUDES
+set(MATRIX_CORE_DEPENDENCY_INCLUDES
 	dependencies/glfw/include
 	dependencies/json/include
 	dependencies/shaderc/libshaderc/include
@@ -18,7 +18,7 @@ find_package(Vulkan)
 list(APPEND MATRIX_CORE_DYNAMIC_DEPENDENCIES Vulkan::Vulkan)
 
 if(NOT ${Vulkan_INCLUDE_DIRS} STREQUAL "")
-	list(APPEND MATRIX_CORE_DEPENDENCY_IMCLUDES ${Vulkan_INCLUDE_DIRS})
+	list(APPEND MATRIX_CORE_DEPENDENCY_INCLUDES ${Vulkan_INCLUDE_DIRS})
 endif()
 
 if(NOT Vulkan_FOUND)
@@ -39,10 +39,10 @@ endif()
 
 add_library(MatrixCoreStatic STATIC ${MATRIX_CORE_LIBRARY_SOURCE_FILES})
 target_link_libraries(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DYNAMIC_DEPENDENCIES} ${MATRIX_CORE_STATIC_DEPENDENCIES} ${CMAKE_DL_LIBS})
-target_include_directories(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DEPENDENCY_IMCLUDES} include)
+target_include_directories(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include)
 
 file(GLOB_RECURSE MATRIX_DEMO_SOURCE_FILES src/demos/*.cpp)
 
 add_executable(MatrixDemos ${MATRIX_DEMO_SOURCE_FILES})
 target_link_libraries(MatrixDemos PUBLIC ${MATRIX_CORE_DYNAMIC_DEPENDENCIES} MatrixCoreStatic ${CMAKE_DL_LIBS})
-target_include_directories(MatrixDemos PUBLIC ${MATRIX_CORE_DEPENDENCY_IMCLUDES} include)
+target_include_directories(MatrixDemos PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include)
