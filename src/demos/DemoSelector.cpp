@@ -34,8 +34,9 @@ int main(int argc, const char **args)
 	}
 	else
 	{
-		std::cout << "Available demos:" << std::endl << "double_pendulum" << std::endl << "sponza" << std::endl;
-		;
+		std::cout << "Available demos:" << std::endl
+				  << "double_pendulum" << std::endl
+				  << "sponza" << std::endl;
 	}
 
 	return 0;

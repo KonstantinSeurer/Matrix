@@ -38,11 +38,12 @@ namespace matrix
 															 StructBufferType::STORAGE, MemoryType::CPU);
 
 				data.descriptorSet = device->createDescriptorSet(setSource);
-				data.descriptorSet->access([&data](DescriptorSetAccessor &accessor)
-										   {
-											   accessor.set("typeTable", data.typeTable.get());
-											   accessor.set("attributes", data.attributes.get());
-										   });
+				data.descriptorSet->access(
+					[&data](DescriptorSetAccessor &accessor)
+					{
+						accessor.set("typeTable", data.typeTable.get());
+						accessor.set("attributes", data.attributes.get());
+					});
 
 				buffers.push_back(data);
 			}
@@ -52,85 +53,88 @@ namespace matrix
 		{
 			FrameData buffer = buffers[bufferIndex];
 
-			buffer.typeTable->access([this](StructAccessor accessor)
-									 {
-										 ArrayAccessor types = accessor.getArray("types");
-										 u32 i = 0;
-										 u32 floatAttributesOffset = 0;
-										 u32 intAttributesOffset = 0;
-										 u32 imageSamplers2DOffset = 0;
-										 u32 imageSamplers3DOffset = 0;
+			buffer.typeTable->access(
+				[this](StructAccessor accessor)
+				{
+					ArrayAccessor types = accessor.getArray("types");
+					u32 i = 0;
+					u32 floatAttributesOffset = 0;
+					u32 intAttributesOffset = 0;
+					u32 imageSamplers2DOffset = 0;
+					u32 imageSamplers3DOffset = 0;
 
-										 for (auto entry : materials)
-										 {
-											 StructAccessor type = types.getStruct(i);
+					for (auto entry : materials)
+					{
+						StructAccessor type = types.getStruct(i);
 
-											 u32 floatAttributeCount = entry.type->getFloatAttributeCount();
-											 u32 intAttributeCount = entry.type->getFloatAttributeCount();
-											 u32 imageSampler2DCount = entry.type->getImageSampler2DCount();
-											 u32 imageSampler3DCount = entry.type->getImageSampler3DCount();
+						u32 floatAttributeCount = entry.type->getFloatAttributeCount();
+						u32 intAttributeCount = entry.type->getFloatAttributeCount();
+						u32 imageSampler2DCount = entry.type->getImageSampler2DCount();
+						u32 imageSampler3DCount = entry.type->getImageSampler3DCount();
 
-											 type.setInt("floatAttributesOffset", floatAttributesOffset);
-											 type.setInt("intAttributesOffset", intAttributesOffset);
-											 type.setInt("imageSamplers2DOffset", imageSamplers2DOffset);
-											 type.setInt("imageSamplers3DOffset", imageSamplers3DOffset);
+						type.setInt("floatAttributesOffset", floatAttributesOffset);
+						type.setInt("intAttributesOffset", intAttributesOffset);
+						type.setInt("imageSamplers2DOffset", imageSamplers2DOffset);
+						type.setInt("imageSamplers3DOffset", imageSamplers3DOffset);
 
-											 type.setInt("floatAttributeCount", floatAttributeCount);
-											 type.setInt("intAttributeCount", intAttributeCount);
-											 type.setInt("imageSampler2DCount", imageSampler2DCount);
-											 type.setInt("imageSampler3DCount", imageSampler3DCount);
+						type.setInt("floatAttributeCount", floatAttributeCount);
+						type.setInt("intAttributeCount", intAttributeCount);
+						type.setInt("imageSampler2DCount", imageSampler2DCount);
+						type.setInt("imageSampler3DCount", imageSampler3DCount);
 
-											 floatAttributesOffset += floatAttributeCount * entry.materials.size();
-											 intAttributesOffset += intAttributeCount * entry.materials.size();
-											 imageSamplers2DOffset += imageSampler2DCount * entry.materials.size();
-											 imageSamplers3DOffset += imageSampler3DCount * entry.materials.size();
-											 i++;
-										 }
-									 });
+						floatAttributesOffset += floatAttributeCount * entry.materials.size();
+						intAttributesOffset += intAttributeCount * entry.materials.size();
+						imageSamplers2DOffset += imageSampler2DCount * entry.materials.size();
+						imageSamplers3DOffset += imageSampler3DCount * entry.materials.size();
+						i++;
+					}
+				});
 
-			buffer.attributes->access([this](StructAccessor accessor)
-									  {
-										  ArrayAccessor ints = accessor.getArray("ints");
-										  ArrayAccessor floats = accessor.getArray("floats");
+			buffer.attributes->access(
+				[this](StructAccessor accessor)
+				{
+					ArrayAccessor ints = accessor.getArray("ints");
+					ArrayAccessor floats = accessor.getArray("floats");
 
-										  u32 floatAttributesOffset = 0;
-										  u32 intAttributesOffset = 0;
+					u32 floatAttributesOffset = 0;
+					u32 intAttributesOffset = 0;
 
-										  for (const auto &entry : materials)
-										  {
-											  for (const auto &material : entry.materials)
-											  {
-												  for (u32 i = 0; i < entry.type->getIntAttributeCount(); i++)
-												  {
-													  ints.setInt(intAttributesOffset++, material->getInt(i));
-												  }
-												  for (u32 i = 0; i < entry.type->getFloatAttributeCount(); i++)
-												  {
-													  floats.setFloat(floatAttributesOffset++, material->getFloat(i));
-												  }
-											  }
-										  }
-									  });
+					for (const auto &entry : materials)
+					{
+						for (const auto &material : entry.materials)
+						{
+							for (u32 i = 0; i < entry.type->getIntAttributeCount(); i++)
+							{
+								ints.setInt(intAttributesOffset++, material->getInt(i));
+							}
+							for (u32 i = 0; i < entry.type->getFloatAttributeCount(); i++)
+							{
+								floats.setFloat(floatAttributesOffset++, material->getFloat(i));
+							}
+						}
+					}
+				});
 
-			buffer.descriptorSet->access([this](DescriptorSetAccessor &accessor)
-										 {
-											 u32 index2D = 0;
-											 u32 index3D = 0;
-											 for (const auto &entry : materials)
-											 {
-												 for (const auto &material : entry.materials)
-												 {
-													 for (u32 i = 0; i < entry.type->getImageSampler2DCount(); i++)
-													 {
-														 accessor.set("imageSamplers2D", index2D++, material->getImageSampler2D(i).get());
-													 }
-													 for (u32 i = 0; i < entry.type->getImageSampler2DCount(); i++)
-													 {
-														 accessor.set("imageSamplers3D", index3D++, material->getImageSampler3D(i).get());
-													 }
-												 }
-											 }
-										 });
+			buffer.descriptorSet->access(
+				[this](DescriptorSetAccessor &accessor)
+				{
+					u32 index2D = 0;
+					u32 index3D = 0;
+					for (const auto &entry : materials)
+					{
+						for (const auto &material : entry.materials)
+						{
+							for (u32 i = 0; i < entry.type->getImageSampler2DCount(); i++)
+							{
+								accessor.set("imageSamplers2D", index2D++, material->getImageSampler2D(i).get());
+							}
+							for (u32 i = 0; i < entry.type->getImageSampler3DCount(); i++)
+							{
+								accessor.set("imageSamplers3D", index3D++, material->getImageSampler3D(i).get());
+							}
+						}
+					}
+				});
 		}
 
 		void SceneMaterialBuffer::render(const Scene &scene)
