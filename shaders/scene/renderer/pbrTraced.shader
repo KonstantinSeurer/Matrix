@@ -38,6 +38,8 @@ set data
 	
 	texture2D environment;
 	texture2D transmittance;
+
+	texture3D volume;
 }
 
 struct Intersection
@@ -101,11 +103,7 @@ function vec3 sampleSky(vec3 D)
 
 function float sampleVolumeDensity(vec3 P)
 {
-	if (dot(P, P) < 1.0)
-	{
-		return 1.0;	
-	}
-	return 0.0;
+	return texture(data.volume, P * 0.5 + 0.5).r;
 }
 
 function float sampleVolumeDensity(Ray ray, float tMax, input output uint seed)
@@ -206,14 +204,14 @@ main
 		}
 		const float rayTravelDistance = volumeIntersection.y - max(volumeIntersection.x, 0.0);
 		
-		const int sampleCount = 20;
+		const int sampleCount = 5;
 		NoiseSeed2D noiseSeed = NoiseSeed2D(globalCoords.x, globalCoords.y, uniforms.seed * sampleCount * 4);
 		
 		const float segmentSize = rayTravelDistance / float(sampleCount);
 		float totalDensity = 0.0;
 		const vec3 nearIntersection = ray.origin + ray.direction * max(volumeIntersection.x, 0.0);
 		vec3 inscattering = vec3(0.0);
-		const vec3 scatterCoefficients = vec3(1.0, 0.1, 0.1);
+		const vec3 scatterCoefficients = vec3(0.5, 0.5, 0.5);
 		const float absorbtion = 1.0;
 		for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++)
 		{

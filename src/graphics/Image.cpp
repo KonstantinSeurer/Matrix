@@ -142,7 +142,10 @@ namespace matrix
 
 		Image3DData::~Image3DData()
 		{
-			delete data;
+			if (transferOwnership)
+			{
+				delete data;
+			}
 		}
 
 		void *Image3DData::getPixelAddress(u32 x, u32 y, u32 z) const

@@ -59,8 +59,6 @@ void skyMain()
 	camera.resize(window.getWidth(), window.getHeight());
 	camera.getTransform()->position.z = -5.0f;
 
-	loadVolume(device, RL("file:///volumes/bunny_cloud.vdb"));
-
 	window.callbacks.update = [&](const UpdateData &data)
 	{
 		const f64 sunRotationX = radians(45.0f) + data.time.seconds() * 0.0;

@@ -90,12 +90,13 @@ namespace matrix
 		{
 			Ref<Image2D> image = createImage2D(data.width, data.height, 1, data.format, usage | ImageUsage::ACCESS);
 
-			image->access([&data](Image2DData accessor)
-						  {
-							  MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
-							  memcpy(accessor.getData(), data.getData(), data.getDataSize());
-						  },
-						  ImageLayout::SHADER_READ_ONLY);
+			image->access(
+				[&data](Image2DData accessor)
+				{
+					MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
+					memcpy(accessor.getData(), data.getData(), data.getDataSize());
+				},
+				ImageLayout::SHADER_READ_ONLY);
 
 			return image;
 		}
@@ -104,12 +105,13 @@ namespace matrix
 		{
 			Ref<Image3D> image = createImage3D(data.width, data.height, data.length, 1, data.format, usage | ImageUsage::ACCESS);
 
-			image->access([&data](Image3DData accessor)
-						  {
-							  MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
-							  memcpy(accessor.getData(), data.getData(), data.getDataSize());
-						  },
-						  ImageLayout::SHADER_READ_ONLY);
+			image->access(
+				[&data](Image3DData accessor)
+				{
+					MATRIX_ASSERT(accessor.getDataSize() == data.getDataSize())
+					memcpy(accessor.getData(), data.getData(), data.getDataSize());
+				},
+				ImageLayout::SHADER_READ_ONLY);
 
 			return image;
 		}
@@ -122,17 +124,18 @@ namespace matrix
 			}
 
 			Ref<Image2D> image = createImage2D(1, 1, 1, format, ImageUsage::SAMPLED | ImageUsage::ACCESS);
-			image->access([&](Image2DData accessor)
-						  {
-							  if (!format->floatingPoint)
-							  {
-								  if (format->componentSize == 1)
-								  {
-									  accessor.setUnorm8(0, 0, (u8)(r * 255.0f), (u8)(g * 255.0f), (u8)(b * 255.0f), (u8)(a * 255.0f));
-								  }
-							  }
-						  },
-						  ImageLayout::SHADER_READ_ONLY);
+			image->access(
+				[&](Image2DData accessor)
+				{
+					if (!format->floatingPoint)
+					{
+						if (format->componentSize == 1)
+						{
+							accessor.setUnorm8(0, 0, (u8)(r * 255.0f), (u8)(g * 255.0f), (u8)(b * 255.0f), (u8)(a * 255.0f));
+						}
+					}
+				},
+				ImageLayout::SHADER_READ_ONLY);
 
 			Ref<ImageView2D> imageView = createImageView2D(image, 0, 1);
 
