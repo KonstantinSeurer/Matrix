@@ -59,7 +59,7 @@ endif()
 # create static library
 add_library(MatrixCoreStatic STATIC ${MATRIX_CORE_LIBRARY_SOURCE_FILES})
 target_link_libraries(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DYNAMIC_DEPENDENCIES} ${MATRIX_CORE_STATIC_DEPENDENCIES} ${CMAKE_DL_LIBS})
-target_include_directories(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include)
+target_include_directories(MatrixCoreStatic PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include src)
 
 # create demos
 file(GLOB_RECURSE MATRIX_DEMO_SOURCE_FILES src/demos/*.cpp)
@@ -67,3 +67,10 @@ file(GLOB_RECURSE MATRIX_DEMO_SOURCE_FILES src/demos/*.cpp)
 add_executable(MatrixDemos ${MATRIX_DEMO_SOURCE_FILES})
 target_link_libraries(MatrixDemos PUBLIC ${MATRIX_CORE_DYNAMIC_DEPENDENCIES} MatrixCoreStatic ${CMAKE_DL_LIBS})
 target_include_directories(MatrixDemos PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include)
+
+# create unit tests
+file(GLOB_RECURSE MATRIX_UNITTESTS_SOURCE_FILES unittests/*.cpp)
+
+add_executable(MatrixUnitTests ${MATRIX_UNITTESTS_SOURCE_FILES})
+target_link_libraries(MatrixUnitTests PUBLIC ${MATRIX_CORE_DYNAMIC_DEPENDENCIES} MatrixCoreStatic ${CMAKE_DL_LIBS})
+target_include_directories(MatrixUnitTests PUBLIC ${MATRIX_CORE_DEPENDENCY_INCLUDES} include unittests)
